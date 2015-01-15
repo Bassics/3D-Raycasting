@@ -21,8 +21,8 @@ public class Renderer implements Drawable {
                 player.getDirection().y + player.getPlane().y * camDirection
             );
             int mapPosition[] = {(int)rayPosition.x, (int)rayPosition.y};
-            float sideDist[] = {0,0};
-            Vector2f deltaDist = new Vector2f(
+            float sideDistance[] = {0,0};
+            Vector2f deltaDistance = new Vector2f(
                     (float)Math.sqrt(1 + Math.pow(rayDirection.y, 2) / Math.pow(rayDirection.x, 2)),
                     (float)Math.sqrt(1 + Math.pow(rayDirection.x, 2) / Math.pow(rayDirection.y, 2))
             );
@@ -32,25 +32,25 @@ public class Renderer implements Drawable {
             int wallSide = 0;
             if (rayDirection.x < 0) {
                 stepDirection[0] = -1;
-                sideDist[0] = (rayPosition.x - mapPosition[0]) * deltaDist.x;
+                sideDistance[0] = (rayPosition.x - mapPosition[0]) * deltaDistance.x;
             } else {
                 stepDirection[0] = 1;
-                sideDist[0] = (mapPosition[0] + 1 - rayPosition.x) * deltaDist.x;
+                sideDistance[0] = (mapPosition[0] + 1 - rayPosition.x) * deltaDistance.x;
             }
             if (rayDirection.y < 0) {
                 stepDirection[1] = -1;
-                sideDist[1] = (rayPosition.y - mapPosition[1]) * deltaDist.y;
+                sideDistance[1] = (rayPosition.y - mapPosition[1]) * deltaDistance.y;
             } else {
                 stepDirection[1] = 1;
-                sideDist[1] = (mapPosition[1] + 1 - rayPosition.y) * deltaDist.y;
+                sideDistance[1] = (mapPosition[1] + 1 - rayPosition.y) * deltaDistance.y;
             }
             while (!hitObject) {
-                if (sideDist[0] < sideDist[1]) {
-                    sideDist[0] += deltaDist.x;
+                if (sideDistance[0] < sideDistance[1]) {
+                    sideDistance[0] += deltaDistance.x;
                     mapPosition[0] += stepDirection[0];
                     wallSide = 0;
                 } else {
-                    sideDist[1] += deltaDist.y;
+                    sideDistance[1] += deltaDistance.y;
                     mapPosition[1] += stepDirection[1];
                     wallSide = 1;
                 }
@@ -69,9 +69,7 @@ public class Renderer implements Drawable {
                 wallX = rayPosition.y + ((mapPosition[0] - rayPosition.x + (1 - stepDirection[0]) / 2) / rayDirection.x) * rayDirection.y;
             wallX -= Math.floor(wallX);
             float texX = (float)Math.floor(wallX * lineHeight);
-            if (wallSide == 0 && rayDirection.x < 0)
-                texX = lineHeight - texX - 1;
-            if (wallSide == 1 && rayDirection.y < 0)
+            if (wallSide == 0 && rayDirection.x < 0 || wallSide == 1 && rayDirection.y < 0)
                 texX = lineHeight - texX - 1;
             Color wallColor = new Color((int)(255/(1.5 * wallSide)), (int)(255/(1.5 * wallSide)), (int)(255/(1.5 * wallSide)));
             RectangleShape rect = new RectangleShape(new Vector2f(1, lineHeight));

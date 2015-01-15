@@ -1,18 +1,34 @@
 import org.jsfml.graphics.*;
 import org.jsfml.system.Vector2f;
-import org.jsfml.system.Vector2i;
 
 public class Renderer implements Drawable {
     private RenderWindow window;
     private Player player;
+    private Color roofColor;
+    private Color floorColor;
     public Renderer(RenderWindow w, Player p) {
         window = w;
         player = p;
+    }
+    public void setRoofColor(Color c) {
+        roofColor = c;
+    }
+    public void setFloorColor(Color c) {
+        floorColor = c;
     }
     public void draw(RenderTarget target, RenderStates states) {
         int[][] currentMap = Map.getCurrentMap();
         int w = window.getSize().x;
         int h = window.getSize().y;
+        int upOffset = (int)(player.getUpWard() * (h / 2));
+        /*RectangleShape roofShape = new RectangleShape(new Vector2f(w, h/2 - upOffset));
+        roofShape.setFillColor(roofColor);
+        roofShape.setPosition(0, 0);
+        roofShape.draw(target, states);
+        RectangleShape floorShape = new RectangleShape(new Vector2f(w, h/2 + upOffset));
+        floorShape.setFillColor(floorColor);
+        floorShape.setPosition(0, h/2 - upOffset);
+        floorShape.draw(target, states);*/
         for (int x = 0; x < w; x++) {
             float camDirection = 2 * x / (float)w - 1;
             Vector2f rayPosition = player.getPosition();
@@ -71,10 +87,14 @@ public class Renderer implements Drawable {
             float texX = (float)Math.floor(wallX * lineHeight);
             if (wallSide == 0 && rayDirection.x < 0 || wallSide == 1 && rayDirection.y < 0)
                 texX = lineHeight - texX - 1;
-            Color wallColor = new Color((int)(255/(1.5 * wallSide)), (int)(255/(1.5 * wallSide)), (int)(255/(1.5 * wallSide)));
+            /*Color wallColor =
+                    new Color((int)(255/(1.5 * wallSide)), (int)(255/(1.5 * wallSide)), (int)(255/(1.5 * wallSide)));*/
+            float colorOffset = (float)Math.pow(rayLength, 1.25);
+            Color wallColor =
+                    new Color((int)(255/colorOffset), (int)(255/colorOffset), (int)(255/colorOffset));
             RectangleShape rect = new RectangleShape(new Vector2f(1, lineHeight));
             rect.setFillColor(wallColor);
-            rect.setPosition(x, -lineHeight / 2 + h / 2);
+            rect.setPosition(x, -lineHeight / 2 + h / 2 - upOffset);
             rect.draw(target, states);
         }
     }

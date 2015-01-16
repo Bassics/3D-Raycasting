@@ -84,18 +84,26 @@ public class Renderer implements Drawable {
             else
                 wallX = rayPosition.y + ((mapPosition[0] - rayPosition.x + (1 - stepDirection[0]) / 2) / rayDirection.x) * rayDirection.y;
             wallX -= Math.floor(wallX);
-            float texX = (float)Math.floor(wallX * lineHeight);
-            if (wallSide == 0 && rayDirection.x < 0 || wallSide == 1 && rayDirection.y < 0)
-                texX = lineHeight - texX - 1;
+            Texture texture = TextureHolder.getTextures()[currentMap[mapPosition[0]][mapPosition[1]]][wallSide];
+            int texX = (int)(wallX * (double)texture.getSize().x);
+            if(wallSide == 0 && rayDirection.x > 0) texX = texture.getSize().x - texX - 1;
+            if(wallSide == 1 && rayDirection.y < 0) texX = texture.getSize().x - texX - 1;
             /*Color wallColor =
                     new Color((int)(255/(1.5 * wallSide)), (int)(255/(1.5 * wallSide)), (int)(255/(1.5 * wallSide)));*/
             float colorOffset = (float)Math.pow(rayLength, 1.25);
             Color wallColor =
                     new Color((int)(255/colorOffset), (int)(255/colorOffset), (int)(255/colorOffset));
-            RectangleShape rect = new RectangleShape(new Vector2f(1, lineHeight));
+            Sprite sprite = new Sprite();
+            sprite.setTexture(texture);
+            sprite.setTextureRect(new IntRect(texX, 0, 1, texture.getSize().y));
+            sprite.setScale(new Vector2f(1, lineHeight/(float)texture.getSize().y));
+            sprite.setPosition(x, -lineHeight / 2 + h / 2 - upOffset);
+            sprite.setColor(wallColor);
+            sprite.draw(target, states);
+            /*RectangleShape rect = new RectangleShape(new Vector2f(1, lineHeight));
             rect.setFillColor(wallColor);
             rect.setPosition(x, -lineHeight / 2 + h / 2 - upOffset);
-            rect.draw(target, states);
+            rect.draw(target, states);*/
         }
     }
 }

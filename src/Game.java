@@ -64,6 +64,7 @@ public class Game {
         player.setPlane(new Vector2f(0, 0.66f));
         player.setMoveSpeed(0.01f);
         player.setRotSpeed(0.01f);
+        TextureHolder.loadTextures();
         renderer = new Renderer(window, player);
         renderer.setFloorColor(new Color(148, 57, 0));
         renderer.setRoofColor(new Color(100, 100, 100));

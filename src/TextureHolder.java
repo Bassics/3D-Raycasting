@@ -9,9 +9,6 @@ public class TextureHolder {
     private static Texture[][] textures = new Texture[NUM_TEXTURES + 1][2];
     public static void loadTextures() {
         for (int i = 1; i <= NUM_TEXTURES; i++) {
-            if(i == 23) {
-                break; // TODO: Fix this KYLE!
-            }
             Texture texture1 = new Texture();
             Texture texture2 = new Texture();
             System.out.println("wolfenstein" + i + "_" + 1 + ".png");

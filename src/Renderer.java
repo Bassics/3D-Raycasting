@@ -86,8 +86,8 @@ public class Renderer implements Drawable {
             wallX -= Math.floor(wallX);
             Texture texture = TextureHolder.getTextures()[currentMap[mapPosition[0]][mapPosition[1]]][wallSide];
             int texX = (int)(wallX * (double)texture.getSize().x);
-            if(wallSide == 0 && rayDirection.x > 0) texX = texture.getSize().x - texX - 1;
-            if(wallSide == 1 && rayDirection.y < 0) texX = texture.getSize().x - texX - 1;
+            if(wallSide == 0 && rayDirection.x > 0 || wallSide == 1 && rayDirection.y < 0)
+                texX = texture.getSize().x - texX - 1;
             /*Color wallColor =
                     new Color((int)(255/(1.5 * wallSide)), (int)(255/(1.5 * wallSide)), (int)(255/(1.5 * wallSide)));*/
             float colorOffset = (float)Math.pow(rayLength, 1.25);

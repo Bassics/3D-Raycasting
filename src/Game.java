@@ -40,6 +40,8 @@ public class Game {
         window.create(VideoMode.getDesktopMode(), windowTitle, WindowStyle.FULLSCREEN);
         /* We don't want an annoying mouse cursor now, do we? */
         window.setMouseCursorVisible(false);
+        window.setFramerateLimit(60);
+        window.setVerticalSyncEnabled(true);
         /* TODO: I'll eventually use a text parser for this =3= */
         Map.loadMap(
                 new int[][]{
@@ -86,6 +88,7 @@ public class Game {
         player.setRotSpeed(0.01f);
         /* Load all of the needed textures */
         TextureHolder.loadTextures();
+        Map.setFloorTexture(TextureHolder.getTextures()[1][1]);
         /* Instantiate the renderer */
         renderer = new Renderer(window, player);
         /* Set the last mouse position to the current mouse position */
@@ -171,6 +174,7 @@ public class Game {
         doInitialize();
         float SECONDS_PER_UPDATE = 1 / 60f;
         Clock updateClock = new Clock();
+        float nextTime = updateClock.getElapsedTime().asSeconds();
         float lagTime = 0;
         while (window.isOpen()) {
             float elapsedTime = updateClock.restart().asSeconds();

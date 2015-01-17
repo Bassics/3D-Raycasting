@@ -60,7 +60,7 @@ public class Renderer implements Drawable {
                 wallSprite.setColor(wallColor);
                 wallSprite.draw(target, states);
                 /* Get correct directions for floor rendering */
-                Vector2f floorPosition = new Vector2f(0, 0);
+                /*Vector2f floorPosition = new Vector2f(0, 0);
                 if (cast.getSide() == 0 && cast.getDirection().x > 0)
                     floorPosition =
                             new Vector2f(cast.getMapPos()[0], cast.getMapPos()[1] + cast.getHitPosition());
@@ -73,16 +73,25 @@ public class Renderer implements Drawable {
                 else
                     floorPosition =
                             new Vector2f(cast.getMapPos()[0] + cast.getHitPosition(), cast.getMapPos()[1] + 1);
-                /*for (int y = wallBottom + 1; y < h; y++) {
+                Texture floorTexture = Map.getFloorTexture();
+                for (int y = wallBottom + 1; y < h; y++) {
                     float currentDist = h / (2f * y - h);
-                    float asfasf = (currentDist - 0f) / (cast.getLength() - 0f);
+                    float weight = (currentDist - 0f) / (cast.getLength() - 0f);
                     Vector2f floorDistance = new Vector2f(
-                            asfasf * floorPosition.x + (1 - asfasf) * player.getPosition().x,
-                            asfasf * floorPosition.y + (1 - asfasf) * player.getPosition().y
+                            weight * floorPosition.x + (1 - weight) * player.getPosition().x,
+                            weight * floorPosition.y + (1 - weight) * player.getPosition().y
                     );
                     Vector2i floorTexPos = new Vector2i(
-                            (int)(floorDistance.x * )
+                            (int)(floorDistance.x * floorTexture.getSize().x) % floorTexture.getSize().x,
+                            (int)(floorDistance.y * floorTexture.getSize().y) % floorTexture.getSize().y
                     );
+                    Sprite floorSprite = new Sprite();
+                    floorSprite.setTexture(floorTexture);
+                    floorSprite.setTextureRect(new IntRect(floorTexPos.x, floorTexPos.y, 1, 1));
+                    floorSprite.setScale(new Vector2f(1, 1));
+                    floorSprite.setPosition(x, y);
+                    floorSprite.setColor(wallColor);
+                    floorSprite.draw(target, states);
                 }*/
             }
         }

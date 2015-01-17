@@ -1,4 +1,3 @@
-import org.jsfml.graphics.Color;
 import org.jsfml.graphics.RenderWindow;
 import org.jsfml.system.Clock;
 import org.jsfml.system.Vector2f;
@@ -8,17 +7,15 @@ import org.jsfml.window.Keyboard.Key;
 import org.jsfml.window.event.Event;
 
 public class Game {
-
     private final RenderWindow window = new RenderWindow();
     private final String windowTitle = "Game";
     private final Vector2i windowDimensions = new Vector2i(640, 480);
-    private final int antiAliasingLevel = 0;
     private boolean windowFocus = true;
     private Player player;
     private Renderer renderer;
     private final float playerSpeed = 0.01f;
     private final float cameraSpeed = 0.01f;
-    private Vector2i lastMousePosition = new Vector2i(0,0);
+    private Vector2i lastMousePosition = new Vector2i(0, 0);
 
     public static void main(String[] args) {
         Game g = new Game();
@@ -28,37 +25,38 @@ public class Game {
     public void doInitialize() {
         VideoMode videoMode = new VideoMode(windowDimensions.x, windowDimensions.y);
         int windowStyle = WindowStyle.CLOSE | WindowStyle.TITLEBAR;
-        window.create(VideoMode.getDesktopMode(), windowTitle, WindowStyle.FULLSCREEN, new ContextSettings(antiAliasingLevel));
+        //window.create(videoMode, windowTitle, windowStyle, new ContextSettings(antiAliasingLevel));
+        window.create(VideoMode.getDesktopMode(), windowTitle, WindowStyle.FULLSCREEN);
         window.setMouseCursorVisible(false);
         Map.loadMap(
-                new int[][] {
-                        {41,41,37,41,35,41,37,41,35,41,37,41,35,41,37,41,35,41,37,41,35,41,41},
-                        {41, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,41},
-                        {37, 0, 5, 8, 7, 9, 5, 8, 5, 9, 5, 8, 5, 9, 5, 8, 5, 9, 5, 8, 5, 9,37},
-                        {41, 0,42,12,24,12,12,11,12, 2, 1, 2,28, 0, 0, 0, 0, 0, 0, 0, 0, 0,41},
-                        {35, 0,17,12, 0, 0, 0, 0, 0, 3, 0, 0, 0,28, 0, 0, 0, 0, 0, 0, 0, 0,35},
-                        {41, 0,18,24, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 0, 0, 0, 0, 0, 0, 0, 0,41},
-                        {37, 0,17,12, 0, 0, 0, 0, 0, 3, 0, 0, 0, 1, 2, 0, 0, 0, 0, 0, 0, 0,37},
-                        {41, 0,17,12,24,12,12,11,12,28, 0, 0, 0, 0, 0,28, 0, 0, 0, 0, 0, 0,41},
-                        {35, 0,20,17,17,18,17, 1, 2, 6, 1, 2,28,29, 0,29, 0, 0, 0, 0, 0, 0,35},
-                        {41, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,41},
-                        {37, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,37},
-                        {41, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,41},
-                        {35, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,35},
-                        {41, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,41},
-                        {37, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,37},
-                        {41, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,41},
-                        {35, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,35},
-                        {41, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,41},
-                        {37, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,37},
-                        {41, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,41},
-                        {35, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,35},
-                        {41, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,41},
-                        {37, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,37},
-                        {41, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,41},
-                        {35, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,35},
-                        {41, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,41},
-                        {41,41,37,41,35,41,37,41,35,41,37,41,35,41,37,41,35,41,37,41,35,41,41},
+                new int[][]{
+                        {41, 41, 37, 41, 35, 41, 37, 41, 35, 41, 37, 41, 35, 41, 37, 41, 35, 41, 37, 41, 35, 41, 41},
+                        {41, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 41},
+                        {37, 0, 5, 8, 7, 9, 5, 8, 5, 9, 5, 8, 5, 9, 5, 8, 5, 9, 5, 8, 5, 9, 37},
+                        {41, 0, 42, 12, 24, 12, 12, 11, 12, 2, 1, 2, 28, 0, 0, 0, 0, 0, 0, 0, 0, 0, 41},
+                        {35, 0, 17, 12, 0, 0, 0, 0, 0, 3, 0, 0, 0, 28, 0, 0, 0, 0, 0, 0, 0, 0, 35},
+                        {41, 0, 18, 24, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 0, 0, 0, 0, 0, 0, 0, 0, 41},
+                        {37, 0, 17, 12, 0, 0, 0, 0, 0, 3, 0, 0, 0, 1, 2, 0, 0, 0, 0, 0, 0, 0, 37},
+                        {41, 0, 17, 12, 24, 12, 12, 11, 12, 28, 0, 0, 0, 0, 0, 28, 0, 0, 0, 0, 0, 0, 41},
+                        {35, 0, 20, 17, 17, 18, 17, 1, 2, 6, 1, 2, 28, 29, 0, 29, 0, 0, 0, 0, 0, 0, 35},
+                        {41, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 41},
+                        {37, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 37},
+                        {41, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 41},
+                        {35, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 35},
+                        {41, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 41},
+                        {37, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 37},
+                        {41, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 41},
+                        {35, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 35},
+                        {41, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 41},
+                        {37, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 37},
+                        {41, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 41},
+                        {35, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 35},
+                        {41, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 41},
+                        {37, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 37},
+                        {41, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 41},
+                        {35, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 35},
+                        {41, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 41},
+                        {41, 41, 37, 41, 35, 41, 37, 41, 35, 41, 37, 41, 35, 41, 37, 41, 35, 41, 37, 41, 35, 41, 41},
                 }
         );
         player = new Player();
@@ -69,8 +67,6 @@ public class Game {
         player.setRotSpeed(0.01f);
         TextureHolder.loadTextures();
         renderer = new Renderer(window, player);
-        renderer.setFloorColor(new Color(148, 57, 0));
-        renderer.setRoofColor(new Color(100, 100, 100));
         lastMousePosition = Mouse.getPosition();
     }
 
@@ -103,8 +99,6 @@ public class Game {
                             break;
                     }
                     break;
-                case MOUSE_MOVED:
-                    break;
                 default:
                     break;
             }
@@ -125,8 +119,8 @@ public class Game {
         }
         Vector2i currentMousePosition = Mouse.getPosition();
         Vector2i mouseMovement = Vector2i.sub(lastMousePosition, currentMousePosition);
-        lastMousePosition = new Vector2i(windowDimensions.x/2, windowDimensions.y/2);
-        player.rotateCamera((float)mouseMovement.x/10);
+        lastMousePosition = new Vector2i(windowDimensions.x / 2, windowDimensions.y / 2);
+        player.rotateCamera((float) mouseMovement.x / 10);
         player.tiltCamera((float) -mouseMovement.y / 10);
         Mouse.setPosition(lastMousePosition);
     }
@@ -145,7 +139,7 @@ public class Game {
 
     public void run() {
         doInitialize();
-        float SECONDS_PER_UPDATE = 1/60f;
+        float SECONDS_PER_UPDATE = 1 / 60f;
         Clock updateClock = new Clock();
         float lagTime = 0;
         while (window.isOpen()) {

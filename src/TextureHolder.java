@@ -1,8 +1,5 @@
 import org.jsfml.graphics.Texture;
-
-import javax.xml.soap.Text;
 import java.io.IOException;
-import java.nio.file.Paths;
 
 public class TextureHolder {
     private final static int NUM_TEXTURES = 58;

@@ -1,109 +1,70 @@
 import org.jsfml.graphics.*;
 import org.jsfml.system.Vector2f;
+import org.jsfml.system.Vector2i;
 
 public class Renderer implements Drawable {
     private RenderWindow window;
     private Player player;
-    private Color roofColor;
-    private Color floorColor;
+
     public Renderer(RenderWindow w, Player p) {
         window = w;
         player = p;
     }
-    public void setRoofColor(Color c) {
-        roofColor = c;
-    }
-    public void setFloorColor(Color c) {
-        floorColor = c;
-    }
+
     public void draw(RenderTarget target, RenderStates states) {
-        int[][] currentMap = Map.getCurrentMap();
         int w = window.getSize().x;
         int h = window.getSize().y;
-        int upOffset = (int)(player.getUpWard() * (h / 2));
-        /*RectangleShape roofShape = new RectangleShape(new Vector2f(w, h/2 - upOffset));
-        roofShape.setFillColor(roofColor);
-        roofShape.setPosition(0, 0);
-        roofShape.draw(target, states);
-        RectangleShape floorShape = new RectangleShape(new Vector2f(w, h/2 + upOffset));
-        floorShape.setFillColor(floorColor);
-        floorShape.setPosition(0, h/2 - upOffset);
-        floorShape.draw(target, states);*/
+        int yaw = (int) (player.getYaw() * (h / 2));
         for (int x = 0; x < w; x++) {
-            float camDirection = 2 * x / (float)w - 1;
-            Vector2f rayPosition = player.getPosition();
+            float camDirection = 2f * x / w - 1;
             Vector2f rayDirection = new Vector2f(
-                player.getDirection().x + player.getPlane().x * camDirection,
-                player.getDirection().y + player.getPlane().y * camDirection
+                    player.getDirection().x + player.getPlane().x * camDirection,
+                    player.getDirection().y + player.getPlane().y * camDirection
             );
-            int mapPosition[] = {(int)rayPosition.x, (int)rayPosition.y};
-            float sideDistance[] = {0,0};
-            Vector2f deltaDistance = new Vector2f(
-                    (float)Math.sqrt(1 + Math.pow(rayDirection.y, 2) / Math.pow(rayDirection.x, 2)),
-                    (float)Math.sqrt(1 + Math.pow(rayDirection.x, 2) / Math.pow(rayDirection.y, 2))
-            );
-            float rayLength = 0;
-            int[] stepDirection = {0,0};
-            boolean hitObject = false;
-            int wallSide = 0;
-            if (rayDirection.x < 0) {
-                stepDirection[0] = -1;
-                sideDistance[0] = (rayPosition.x - mapPosition[0]) * deltaDistance.x;
-            } else {
-                stepDirection[0] = 1;
-                sideDistance[0] = (mapPosition[0] + 1 - rayPosition.x) * deltaDistance.x;
+            Ray cast = new Ray(player.getPosition(), rayDirection);
+            boolean hitObject = cast.calculateRay();
+            if (hitObject) {
+                int lineHeight = Math.abs((int) (h / cast.getLength()));
+                Texture wallTexture = TextureHolder.getTextures()[cast.getInt()][cast.getSide()];
+                int texturePosition = (int) (cast.getHitPosition() * (double) wallTexture.getSize().x);
+                if (cast.getSide() == 0 && cast.getDirection().x > 0 || cast.getSide() == 1 && cast.getDirection().y < 0)
+                    texturePosition = wallTexture.getSize().x - texturePosition - 1;
+                int wallTop = -lineHeight / 2 + h / 2 - yaw;
+                int wallBottom = lineHeight / 2 + h / 2 - yaw;
+                float colorOff = (float) Math.pow(cast.getLength(), 1.25);
+                Color wallColor = new Color((int) (255 / colorOff), (int) (255 / colorOff), (int) (255 / colorOff));
+                Sprite wallSprite = new Sprite();
+                wallSprite.setTexture(wallTexture);
+                wallSprite.setTextureRect(new IntRect(texturePosition, 0, 1, wallTexture.getSize().y));
+                wallSprite.setScale(new Vector2f(1, lineHeight / (float) wallTexture.getSize().y));
+                wallSprite.setPosition(x, wallTop);
+                wallSprite.setColor(wallColor);
+                wallSprite.draw(target, states);
+                Vector2f floorPosition = new Vector2f(0, 0);
+                if (cast.getSide() == 0 && cast.getDirection().x > 0)
+                    floorPosition =
+                            new Vector2f(cast.getMapPos()[0], cast.getMapPos()[1] + cast.getHitPosition());
+                else if (cast.getSide() == 0 && cast.getDirection().x < 0)
+                    floorPosition =
+                            new Vector2f(cast.getMapPos()[0] + 1, cast.getMapPos()[1] + +cast.getHitPosition());
+                else if (cast.getSide() == 1 && cast.getDirection().y > 0)
+                    floorPosition =
+                            new Vector2f(cast.getMapPos()[0] + cast.getHitPosition(), cast.getMapPos()[1]);
+                else
+                    floorPosition =
+                            new Vector2f(cast.getMapPos()[0] + cast.getHitPosition(), cast.getMapPos()[1] + 1);
+                /*for (int y = wallBottom + 1; y < h; y++) {
+                    float currentDist = h / (2f * y - h);
+                    float asfasf = (currentDist - 0f) / (cast.getLength() - 0f);
+                    Vector2f floorDistance = new Vector2f(
+                            asfasf * floorPosition.x + (1 - asfasf) * player.getPosition().x,
+                            asfasf * floorPosition.y + (1 - asfasf) * player.getPosition().y
+                    );
+                    Vector2i floorTexPos = new Vector2i(
+                            (int)(floorDistance.x * )
+                    );
+                }*/
             }
-            if (rayDirection.y < 0) {
-                stepDirection[1] = -1;
-                sideDistance[1] = (rayPosition.y - mapPosition[1]) * deltaDistance.y;
-            } else {
-                stepDirection[1] = 1;
-                sideDistance[1] = (mapPosition[1] + 1 - rayPosition.y) * deltaDistance.y;
-            }
-            while (!hitObject) {
-                if (sideDistance[0] < sideDistance[1]) {
-                    sideDistance[0] += deltaDistance.x;
-                    mapPosition[0] += stepDirection[0];
-                    wallSide = 0;
-                } else {
-                    sideDistance[1] += deltaDistance.y;
-                    mapPosition[1] += stepDirection[1];
-                    wallSide = 1;
-                }
-                if (currentMap[mapPosition[0]][mapPosition[1]] > 0)
-                    hitObject = true;
-            }
-            if (wallSide == 0)
-                rayLength = Math.abs((mapPosition[0] - rayPosition.x + (1 - stepDirection[0]) / 2) / rayDirection.x);
-            else
-                rayLength = Math.abs((mapPosition[1] - rayPosition.y + (1 - stepDirection[1]) / 2) / rayDirection.y);
-            int lineHeight = Math.abs((int)(h / rayLength));
-            float wallX;
-            if (wallSide == 1)
-                wallX = rayPosition.x + ((mapPosition[1] - rayPosition.y + (1 - stepDirection[1]) / 2) / rayDirection.y) * rayDirection.x;
-            else
-                wallX = rayPosition.y + ((mapPosition[0] - rayPosition.x + (1 - stepDirection[0]) / 2) / rayDirection.x) * rayDirection.y;
-            wallX -= Math.floor(wallX);
-            Texture texture = TextureHolder.getTextures()[currentMap[mapPosition[0]][mapPosition[1]]][wallSide];
-            int texX = (int)(wallX * (double)texture.getSize().x);
-            if(wallSide == 0 && rayDirection.x > 0 || wallSide == 1 && rayDirection.y < 0)
-                texX = texture.getSize().x - texX - 1;
-            /*Color wallColor =
-                    new Color((int)(255/(1.5 * wallSide)), (int)(255/(1.5 * wallSide)), (int)(255/(1.5 * wallSide)));*/
-            float colorOffset = (float)Math.pow(rayLength, 1.25);
-            Color wallColor =
-                    new Color((int)(255/colorOffset), (int)(255/colorOffset), (int)(255/colorOffset));
-            Sprite sprite = new Sprite();
-            sprite.setTexture(texture);
-            sprite.setTextureRect(new IntRect(texX, 0, 1, texture.getSize().y));
-            sprite.setScale(new Vector2f(1, lineHeight/(float)texture.getSize().y));
-            sprite.setPosition(x, -lineHeight / 2 + h / 2 - upOffset);
-            sprite.setColor(wallColor);
-            sprite.draw(target, states);
-            /*RectangleShape rect = new RectangleShape(new Vector2f(1, lineHeight));
-            rect.setFillColor(wallColor);
-            rect.setPosition(x, -lineHeight / 2 + h / 2 - upOffset);
-            rect.draw(target, states);*/
         }
     }
 }

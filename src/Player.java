@@ -1,14 +1,21 @@
 import org.jsfml.system.Vector2f;
 
 public class Player {
+    /* Current player position */
     private Vector2f position = new Vector2f(0,0);
+    /* Current camera direction */
     private Vector2f direction = new Vector2f(0,0);
+    /* Current camera plane */
     private Vector2f plane = new Vector2f(0,0);
+    /* How much the camera is tilted on the y-axis */
     private float yaw = 0;
+    /* How fast the player moves */
     private float moveSpeed = 0;
+    /* How fast the camera moves */
     private float rotSpeed = 0;
     public Player() {}
     public void moveForward(float dir) {
+        /* If the position isn't occupied, set the player's position by direction */
         float posX = position.x;
         float posY = position.y;
         if (Map.getInt((int)(position.x + direction.x * moveSpeed * dir), (int)position.y) == 0)
@@ -18,6 +25,7 @@ public class Player {
         position = new Vector2f(posX, posY);
     }
     public void moveSideways(float dir) {
+        /* The same as moveForward, but from side to side */
         Vector2f newDirection = new Vector2f(
                 (float)(direction.x * Math.cos(Math.PI/2) - direction.y * Math.sin(Math.PI/2)),
                 (float)(direction.x * Math.sin(Math.PI/2) + direction.y * Math.cos(Math.PI/2))
@@ -31,6 +39,7 @@ public class Player {
         position = new Vector2f(posX, posY);
     }
     public void rotateCamera(float dir) {
+        /* Rotate the camera by the pitch */
         direction = new Vector2f(
                 (float)(direction.x * Math.cos(rotSpeed * dir) - direction.y * Math.sin(rotSpeed * dir)),
                 (float)(direction.x * Math.sin(rotSpeed * dir) + direction.y * Math.cos(rotSpeed * dir))
@@ -41,6 +50,7 @@ public class Player {
         );
     }
     public void tiltCamera(float dir) {
+        /* Rotate the camera by the yaw */
         if (Math.abs(yaw + (rotSpeed * dir)) < 1)
             yaw += rotSpeed * dir;
     }

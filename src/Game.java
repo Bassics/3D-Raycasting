@@ -6,67 +6,89 @@ import org.jsfml.window.*;
 import org.jsfml.window.Keyboard.Key;
 import org.jsfml.window.event.Event;
 
+/**
+ * @author: Kyle Lee
+ */
+
 public class Game {
+    /* The main RenderWindow of the game */
     private final RenderWindow window = new RenderWindow();
+    /* String used to name the title bar */
     private final String windowTitle = "Game";
+    /* We don't necessarily need this, but I am keeping it for good measures */
     private final Vector2i windowDimensions = new Vector2i(640, 480);
+    /* Boolean used to keep track of whether the window is focused */
     private boolean windowFocus = true;
+    /* Instantiate the Player */
     private Player player;
+    /* Instantiate the Renderer */
     private Renderer renderer;
+    /* These two are currently used for testing */
     private final float playerSpeed = 0.01f;
     private final float cameraSpeed = 0.01f;
+    /* Keep track of the previous position of the mouse */
     private Vector2i lastMousePosition = new Vector2i(0, 0);
 
     public static void main(String[] args) {
+        /* Start the new game */
         Game g = new Game();
         g.run();
     }
 
     public void doInitialize() {
-        VideoMode videoMode = new VideoMode(windowDimensions.x, windowDimensions.y);
-        int windowStyle = WindowStyle.CLOSE | WindowStyle.TITLEBAR;
-        //window.create(videoMode, windowTitle, windowStyle, new ContextSettings(antiAliasingLevel));
+        /* Create the window */
         window.create(VideoMode.getDesktopMode(), windowTitle, WindowStyle.FULLSCREEN);
+        /* We don't want an annoying mouse cursor now, do we? */
         window.setMouseCursorVisible(false);
+        /* TODO: I'll eventually use a text parser for this =3= */
         Map.loadMap(
                 new int[][]{
-                        {41, 41, 37, 41, 35, 41, 37, 41, 35, 41, 37, 41, 35, 41, 37, 41, 35, 41, 37, 41, 35, 41, 41},
-                        {41, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 41},
-                        {37, 0, 5, 8, 7, 9, 5, 8, 5, 9, 5, 8, 5, 9, 5, 8, 5, 9, 5, 8, 5, 9, 37},
-                        {41, 0, 42, 12, 24, 12, 12, 11, 12, 2, 1, 2, 28, 0, 0, 0, 0, 0, 0, 0, 0, 0, 41},
-                        {35, 0, 17, 12, 0, 0, 0, 0, 0, 3, 0, 0, 0, 28, 0, 0, 0, 0, 0, 0, 0, 0, 35},
-                        {41, 0, 18, 24, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 0, 0, 0, 0, 0, 0, 0, 0, 41},
-                        {37, 0, 17, 12, 0, 0, 0, 0, 0, 3, 0, 0, 0, 1, 2, 0, 0, 0, 0, 0, 0, 0, 37},
-                        {41, 0, 17, 12, 24, 12, 12, 11, 12, 28, 0, 0, 0, 0, 0, 28, 0, 0, 0, 0, 0, 0, 41},
-                        {35, 0, 20, 17, 17, 18, 17, 1, 2, 6, 1, 2, 28, 29, 0, 29, 0, 0, 0, 0, 0, 0, 35},
-                        {41, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 41},
-                        {37, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 37},
-                        {41, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 41},
-                        {35, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 35},
-                        {41, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 41},
-                        {37, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 37},
-                        {41, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 41},
-                        {35, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 35},
-                        {41, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 41},
-                        {37, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 37},
-                        {41, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 41},
-                        {35, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 35},
-                        {41, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 41},
-                        {37, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 37},
-                        {41, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 41},
-                        {35, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 35},
-                        {41, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 41},
-                        {41, 41, 37, 41, 35, 41, 37, 41, 35, 41, 37, 41, 35, 41, 37, 41, 35, 41, 37, 41, 35, 41, 41},
+                        {41,41,37,41,35,41,37,41,35,41,37,41,35,41,37,41,35,41,37,41,35,41,41},
+                        {41, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,41},
+                        {37, 0, 5, 8, 7, 9, 5, 8, 5, 9, 5, 8, 5, 9, 5, 8, 5, 9, 5, 8, 5, 9,37},
+                        {41, 0,42,12,24,12,12,11,12, 2, 1, 2,28, 0, 0, 0, 0, 0, 0, 0, 0, 0,41},
+                        {35, 0,17,12, 0, 0, 0, 0, 0, 3, 0, 0, 0,28, 0, 0, 0, 0, 0, 0, 0, 0,35},
+                        {41, 0,18,24, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 0, 0, 0, 0, 0, 0, 0, 0,41},
+                        {37, 0,17,12, 0, 0, 0, 0, 0, 3, 0, 0, 0, 1, 2, 0, 0, 0, 0, 0, 0, 0,37},
+                        {41, 0,17,12,24,12,12,11,12,28, 0, 0, 0, 0, 0,28, 0, 0, 0, 0, 0, 0,41},
+                        {35, 0,20,17,17,18,17, 1, 2, 6, 1, 2,28,29, 0,29, 0, 0, 0, 0, 0, 0,35},
+                        {41, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,41},
+                        {37, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,37},
+                        {41, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,41},
+                        {35, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,35},
+                        {41, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,41},
+                        {37, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,37},
+                        {41, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,41},
+                        {35, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,35},
+                        {41, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,41},
+                        {37, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,37},
+                        {41, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,41},
+                        {35, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,35},
+                        {41, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,41},
+                        {37, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,37},
+                        {41, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,41},
+                        {35, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,35},
+                        {41, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,41},
+                        {41,41,37,41,35,41,37,41,35,41,37,41,35,41,37,41,35,41,37,41,35,41,41}
                 }
         );
+        /* Let me instantiate that player for you. */
         player = new Player();
+        /* TODO: Again, I'll use a text parser for this */
         player.setPosition(new Vector2f(22, 12));
+        /* TODO: And this */
         player.setDirection(new Vector2f(-1, 0));
+        /* This sets the plane for the camera rendering */
         player.setPlane(new Vector2f(0, 0.66f));
+        /* Set the player's move speed */
         player.setMoveSpeed(0.01f);
+        /* Set the camera's rotation speed */
         player.setRotSpeed(0.01f);
+        /* Load all of the needed textures */
         TextureHolder.loadTextures();
+        /* Instantiate the renderer */
         renderer = new Renderer(window, player);
+        /* Set the last mouse position to the current mouse position */
         lastMousePosition = Mouse.getPosition();
     }
 
@@ -104,6 +126,7 @@ public class Game {
             }
         }
         if (windowFocus) {
+            /* Move the player in the desired direction */
             if (Keyboard.isKeyPressed(Key.W)) {
                 player.moveForward(1);
             }
@@ -117,12 +140,19 @@ public class Game {
                 player.moveSideways(-1);
             }
         }
-        Vector2i currentMousePosition = Mouse.getPosition();
-        Vector2i mouseMovement = Vector2i.sub(lastMousePosition, currentMousePosition);
-        lastMousePosition = new Vector2i(windowDimensions.x / 2, windowDimensions.y / 2);
-        player.rotateCamera((float) mouseMovement.x / 10);
-        player.tiltCamera((float) -mouseMovement.y / 10);
-        Mouse.setPosition(lastMousePosition);
+        if (windowFocus) {
+            /* Get the current mouse position */
+            Vector2i currentMousePosition = Mouse.getPosition();
+            /* Get the difference between the last and the current mouse position */
+            Vector2i mouseMovement = Vector2i.sub(lastMousePosition, currentMousePosition);
+            /* Set the last mouse position to the center (explanation below) */
+            lastMousePosition = new Vector2i(windowDimensions.x / 2, windowDimensions.y / 2);
+            /* Rotate the camera by the buffered mouse movement */
+            player.rotateCamera((float) mouseMovement.x / 10);
+            player.tiltCamera((float) -mouseMovement.y / 10);
+            /* Set the current mouse position to the center so the mouse doesn't go off the edge */
+            Mouse.setPosition(lastMousePosition);
+        }
     }
 
     public void doLogic() {

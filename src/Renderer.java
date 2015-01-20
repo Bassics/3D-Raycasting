@@ -51,7 +51,7 @@ public class Renderer implements Drawable {
                 /* The current ambient color of the line */
                 Color wallColor = new Color((int) (255 / colorOff), (int) (255 / colorOff), (int) (255 / colorOff));
                 /* Create a new sprite for the line */
-                Sprite wallSprite = new Sprite();
+                Sprite wallSprite = SpriteHandler.getSprite(x);
                 /* Set the texture */
                 wallSprite.setTexture(wallTexture);
                 /* Correct the scaling of the sprite and texture */

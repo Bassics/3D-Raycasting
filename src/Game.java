@@ -88,6 +88,7 @@ public class Game {
         player.setRotSpeed(cameraSpeed);
         /* Load all of the needed textures */
         TextureHandler.loadTextures();
+        SpriteHandler.loadSprites(window.getSize().x);
         Map.setFloorTexture(TextureHandler.getWallTextures()[1][1]);
         WeaponHandler.setWindowDimensions(windowDimensions);
         WeaponHandler.createWeapon("m1911", player);

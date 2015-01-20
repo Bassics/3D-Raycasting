@@ -24,8 +24,8 @@ public class Game {
     /* Instantiate the Renderer */
     private Renderer renderer;
     /* These two are currently used for testing */
-    private final float playerSpeed = 0.01f;
-    private final float cameraSpeed = 0.01f;
+    private final float playerSpeed = 0.05f;
+    private final float cameraSpeed = 0.02f;
     /* Keep track of the previous position of the mouse */
     private Vector2i lastMousePosition = new Vector2i(0, 0);
 
@@ -37,7 +37,7 @@ public class Game {
 
     public void doInitialize() {
         /* Create the window */
-        window.create(VideoMode.getDesktopMode(), windowTitle, WindowStyle.FULLSCREEN);
+        window.create(new VideoMode(windowDimensions.x,windowDimensions.y), windowTitle, WindowStyle.FULLSCREEN);
         /* We don't want an annoying mouse cursor now, do we? */
         window.setMouseCursorVisible(false);
         window.setFramerateLimit(60);
@@ -83,12 +83,14 @@ public class Game {
         /* This sets the plane for the camera rendering */
         player.setPlane(new Vector2f(0, 0.66f));
         /* Set the player's move speed */
-        player.setMoveSpeed(0.01f);
+        player.setMoveSpeed(playerSpeed);
         /* Set the camera's rotation speed */
-        player.setRotSpeed(0.01f);
+        player.setRotSpeed(cameraSpeed);
         /* Load all of the needed textures */
-        TextureHolder.loadTextures();
-        Map.setFloorTexture(TextureHolder.getTextures()[1][1]);
+        TextureHandler.loadTextures();
+        Map.setFloorTexture(TextureHandler.getWallTextures()[1][1]);
+        WeaponHandler.setWindowDimensions(windowDimensions);
+        WeaponHandler.createWeapon("m1911", player);
         /* Instantiate the renderer */
         renderer = new Renderer(window, player);
         /* Set the last mouse position to the current mouse position */
@@ -106,6 +108,13 @@ public class Game {
                     break;
                 case LOST_FOCUS:
                     windowFocus = false;
+                    break;
+                case MOUSE_BUTTON_PRESSED:
+                    switch (event.asMouseButtonEvent().button) {
+                        case LEFT:
+                            WeaponHandler.getCurrentWeapon().animateShooting();
+                            break;
+                    }
                     break;
                 case KEY_PRESSED:
                     switch (event.asKeyEvent().key) {
@@ -174,6 +183,7 @@ public class Game {
         doInitialize();
         float SECONDS_PER_UPDATE = 1 / 60f;
         Clock updateClock = new Clock();
+        Clock testClock = new Clock();
         float nextTime = updateClock.getElapsedTime().asSeconds();
         float lagTime = 0;
         while (window.isOpen()) {
@@ -186,12 +196,12 @@ public class Game {
                 doLogic();
                 lagTime -= SECONDS_PER_UPDATE;
             }
-
+            testClock.restart();
             doRender();
-
+            //System.out.println(testClock.getElapsedTime().asSeconds());
             float extrapolation = lagTime / SECONDS_PER_UPDATE;
-            player.setMoveSpeed(playerSpeed + (playerSpeed * extrapolation));
-            player.setRotSpeed(cameraSpeed + (cameraSpeed * extrapolation));
+            //player.setMoveSpeed(playerSpeed + (playerSpeed * extrapolation));
+            //player.setRotSpeed(cameraSpeed + (cameraSpeed * extrapolation));
         }
     }
 

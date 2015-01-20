@@ -1,6 +1,9 @@
 import org.jsfml.graphics.*;
 import org.jsfml.system.Vector2f;
 import org.jsfml.system.Vector2i;
+import org.jsfml.system.Vector3f;
+
+import java.util.Arrays;
 
 public class Renderer implements Drawable {
     private RenderWindow window;
@@ -33,9 +36,9 @@ public class Renderer implements Drawable {
                 /* This is the height of the current pixel's line */
                 int lineHeight = Math.abs((int) (h / cast.getLength()));
                 /* Grab the texture from the stored ones */
-                Texture wallTexture = TextureHolder.getTextures()[cast.getInt()][cast.getSide()];
+                Texture wallTexture = TextureHandler.getWallTextures()[cast.getInt()][cast.getSide()];
                 /* Calculate what x pixel on the texture we want to render */
-                int texturePosition = (int) (cast.getHitPosition() * (double) wallTexture.getSize().x);
+                int texturePosition = (int) (cast.getHitPosition() * (float) wallTexture.getSize().x);
                 /* Depending on the direction of the wall, get the inverse texture position */
                 if (cast.getSide() == 0 && cast.getDirection().x > 0 || cast.getSide() == 1 && cast.getDirection().y < 0)
                     texturePosition = wallTexture.getSize().x - texturePosition - 1;
@@ -44,7 +47,7 @@ public class Renderer implements Drawable {
                 /* Where the line ends on the screen */
                 int wallBottom = lineHeight / 2 + h / 2 - yaw;
                 /* The offset of color depending on how far the player is */
-                float colorOff = (float) Math.pow(cast.getLength(), 1.25);
+                float colorOff = (float) Math.pow(cast.getLength()/1.5, 0.8);
                 /* The current ambient color of the line */
                 Color wallColor = new Color((int) (255 / colorOff), (int) (255 / colorOff), (int) (255 / colorOff));
                 /* Create a new sprite for the line */
@@ -59,6 +62,40 @@ public class Renderer implements Drawable {
                 /* Set the ambient color of the line */
                 wallSprite.setColor(wallColor);
                 wallSprite.draw(target, states);
+                for (int i = 0; i < Map.getHitPositions().size(); i++) {
+                    Vector3f data = Map.getHitPositions().get(i);
+                    if (cast.getSide() == 1 && Math.floor(cast.getExactHit().y) == Math.floor(data.y)) {
+                        float hitPosition = (cast.getExactHit().x - data.x) * 10;
+                        if (cast.getExactHit().x > data.x && hitPosition > 0 && hitPosition < 1) {
+                            Texture hitTexture = Map.getHitTextures().get(i);
+                            System.out.println(hitPosition);
+                            Sprite hitSprite = new Sprite();
+                            hitSprite.setTexture(hitTexture);
+                            hitSprite.setTextureRect(
+                                    new IntRect((int) (hitPosition * (float) hitTexture.getSize().x), 0, 1, 4)
+                            );
+                            hitSprite.setScale(new Vector2f(1, lineHeight / 10 / (float) hitTexture.getSize().y));
+                            hitSprite.setPosition(x, h / 2 + (int) (data.z * (h / 2)) - yaw);
+                            hitSprite.setPosition(x, wallTop + (int) ((data.z + 1)/2 * lineHeight));
+                            hitSprite.draw(target, states);
+                        }
+                    } else if (cast.getSide() == 0 && Math.floor(cast.getExactHit().x) == Math.floor(data.x)) {
+                        float hitPosition = (cast.getExactHit().y - data.y) * 10;
+                        if (cast.getExactHit().y > data.y && hitPosition > 0 && hitPosition < 1) {
+                            Texture hitTexture = Map.getHitTextures().get(i);
+                            System.out.println(hitPosition);
+                            Sprite hitSprite = new Sprite();
+                            hitSprite.setTexture(hitTexture);
+                            hitSprite.setTextureRect(
+                                    new IntRect((int) (hitPosition * (float) hitTexture.getSize().x), 0, 1, 4)
+                            );
+                            hitSprite.setScale(new Vector2f(1, lineHeight / 10 / (float) hitTexture.getSize().y));
+                            hitSprite.setPosition(x, h / 2 + (int) (data.z * (h / 2)) - yaw);
+                            hitSprite.setPosition(x, wallTop + (int) ((data.z + 1)/2 * lineHeight));
+                            hitSprite.draw(target, states);
+                        }
+                    }
+                }
                 /* Get correct directions for floor rendering */
                 /*Vector2f floorPosition = new Vector2f(0, 0);
                 if (cast.getSide() == 0 && cast.getDirection().x > 0)
@@ -95,5 +132,6 @@ public class Renderer implements Drawable {
                 }*/
             }
         }
+        WeaponHandler.getCurrentWeapon().draw(target, states);
     }
 }

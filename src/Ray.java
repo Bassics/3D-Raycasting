@@ -1,6 +1,8 @@
 import org.jsfml.system.Vector2f;
 import org.jsfml.system.Vector2i;
 
+import java.util.Arrays;
+
 public class Ray {
     /* Starting position of the Ray */
     private Vector2f position;
@@ -16,6 +18,7 @@ public class Ray {
     private int objInt = 0;
     /* The position of the object */
     private int[] mapPosition = {0, 0};
+    private Vector2f exactHit;
 
     public Ray(Vector2f p, Vector2f d) {
         position = p;
@@ -48,6 +51,10 @@ public class Ray {
 
     public int[] getMapPos() {
         return mapPosition;
+    }
+
+    public Vector2f getExactHit() {
+        return exactHit;
     }
 
     public boolean calculateRay() {
@@ -101,10 +108,14 @@ public class Ray {
         else
             rayLength = Math.abs((mapPosition[1] - position.y + (1 - stepDirection.y) / 2) / direction.y);
         /* Calculate where EXACTLY on the wall, the ray hit */
+        exactHit = new Vector2f(
+                position.x + ((mapPosition[1] - position.y + (1 - stepDirection.y) / 2) / direction.y) * direction.x,
+                position.y + ((mapPosition[0] - position.x + (1 - stepDirection.x) / 2) / direction.x) * direction.y
+        );
         if (wallSide == 1)
-            hitPosition = position.x + ((mapPosition[1] - position.y + (1 - stepDirection.y) / 2) / direction.y) * direction.x;
+            hitPosition = exactHit.x;
         else
-            hitPosition = position.y + ((mapPosition[0] - position.x + (1 - stepDirection.x) / 2) / direction.x) * direction.y;
+            hitPosition = exactHit.y;
         hitPosition -= Math.floor(hitPosition);
         return hitObject;
     }

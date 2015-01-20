@@ -1,13 +1,31 @@
 import org.jsfml.graphics.Texture;
+import org.jsfml.system.Vector2f;
+import org.jsfml.system.Vector3f;
+
+import java.util.ArrayList;
 
 public class Map {
     /* The current map grid */
     private static int[][] currentMap;
+    private static ArrayList<Vector3f> hitPositions;
+    private static ArrayList<Texture> hitTextures;
     /* The current floor texture */
     private static Texture floorTexture;
     /* Load the grid map */
     public static void loadMap(int[][] m) {
         currentMap = m;
+        hitPositions = new ArrayList<Vector3f>();
+        hitTextures = new ArrayList<Texture>();
+    }
+    public static void addHitPosition(Vector3f data, Texture t) {
+        hitPositions.add(data);
+        hitTextures.add(t);
+    }
+    public static ArrayList<Vector3f> getHitPositions() {
+        return hitPositions;
+    }
+    public static ArrayList<Texture> getHitTextures() {
+        return hitTextures;
     }
     /* Get the grid map */
     public static int[][] getCurrentMap() {

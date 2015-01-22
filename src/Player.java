@@ -13,6 +13,8 @@ public class Player {
     private float moveSpeed = 0;
     /* How fast the camera moves */
     private float rotSpeed = 0;
+    private float forwardDir = 0;
+    private float sidewaysDir = 0;
     public Player() {}
     public void moveForward(float dir) {
         /* If the position isn't occupied, set the player's position by direction */
@@ -78,5 +80,18 @@ public class Player {
     }
     public float getYaw() {
         return yaw;
+    }
+
+    public void setSidewaysDir(float sidewaysDir) {
+        this.sidewaysDir = sidewaysDir;
+    }
+
+    public void setForwardDir(float forwardDir) {
+        this.forwardDir = forwardDir;
+    }
+
+    public void update() {
+        moveForward(forwardDir);
+        moveSideways(sidewaysDir);
     }
 }

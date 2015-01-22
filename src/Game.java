@@ -37,10 +37,9 @@ public class Game {
 
     public void doInitialize() {
         /* Create the window */
-        window.create(new VideoMode(windowDimensions.x,windowDimensions.y), windowTitle, WindowStyle.FULLSCREEN);
+        window.create(VideoMode.getDesktopMode(), windowTitle, WindowStyle.FULLSCREEN);
         /* We don't want an annoying mouse cursor now, do we? */
         window.setMouseCursorVisible(false);
-        window.setFramerateLimit(60);
         window.setVerticalSyncEnabled(true);
         /* TODO: I'll eventually use a text parser for this =3= */
         Map.loadMap(
@@ -141,16 +140,18 @@ public class Game {
         if (windowFocus) {
             /* Move the player in the desired direction */
             if (Keyboard.isKeyPressed(Key.W)) {
-                player.moveForward(1);
+                player.setForwardDir(1);
+            } else if (Keyboard.isKeyPressed(Key.S)) {
+                player.setForwardDir(-1);
+            } else {
+                player.setForwardDir(0);
             }
             if (Keyboard.isKeyPressed(Key.A)) {
-                player.moveSideways(1);
-            }
-            if (Keyboard.isKeyPressed(Key.S)) {
-                player.moveForward(-1);
-            }
-            if (Keyboard.isKeyPressed(Key.D)) {
-                player.moveSideways(-1);
+                player.setSidewaysDir(1);
+            } else if (Keyboard.isKeyPressed(Key.D)) {
+                player.setSidewaysDir(-1);
+            } else {
+                player.setSidewaysDir(0);
             }
         }
         if (windowFocus) {
@@ -163,13 +164,16 @@ public class Game {
             /* Rotate the camera by the buffered mouse movement */
             player.rotateCamera((float) mouseMovement.x / 10);
             player.tiltCamera((float) -mouseMovement.y / 10);
+            WeaponHandler.getCurrentWeapon().setPitchOffset((int)(mouseMovement.x/5));
+            WeaponHandler.getCurrentWeapon().setYawOffset((int)(mouseMovement.y/5));
             /* Set the current mouse position to the center so the mouse doesn't go off the edge */
             Mouse.setPosition(lastMousePosition);
         }
     }
 
     public void doLogic() {
-
+        player.update();
+        WeaponHandler.getCurrentWeapon().update();
     }
 
     public void doRender() {
@@ -184,12 +188,13 @@ public class Game {
         doInitialize();
         float SECONDS_PER_UPDATE = 1 / 60f;
         Clock updateClock = new Clock();
-        Clock testClock = new Clock();
-        float nextTime = updateClock.getElapsedTime().asSeconds();
-        float lagTime = 0;
+        float lagTime = 0f;
+        float frameTime = 0f;
+        int framesDrawn = 0;
         while (window.isOpen()) {
             float elapsedTime = updateClock.restart().asSeconds();
             lagTime += elapsedTime;
+            frameTime += elapsedTime;
 
             doInput();
 
@@ -197,12 +202,15 @@ public class Game {
                 doLogic();
                 lagTime -= SECONDS_PER_UPDATE;
             }
-            testClock.restart();
+
             doRender();
-            //System.out.println(testClock.getElapsedTime().asSeconds());
-            float extrapolation = lagTime / SECONDS_PER_UPDATE;
-            //player.setMoveSpeed(playerSpeed + (playerSpeed * extrapolation));
-            //player.setRotSpeed(cameraSpeed + (cameraSpeed * extrapolation));
+            framesDrawn++;
+
+            if (frameTime >= 1f) {
+                System.out.println("FPS: " + (int)(framesDrawn/frameTime));
+                framesDrawn = 0;
+                frameTime = 0f;
+            }
         }
     }
 

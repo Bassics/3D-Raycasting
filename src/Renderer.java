@@ -47,7 +47,7 @@ public class Renderer implements Drawable {
                 /* Where the line ends on the screen */
                 int wallBottom = lineHeight / 2 + h / 2 - yaw;
                 /* The offset of color depending on how far the player is */
-                float colorOff = (float) Math.pow(cast.getLength()/1.5, 0.8);
+                float colorOff = (float) Math.pow(cast.getLength()/1.5, 0.5);
                 /* The current ambient color of the line */
                 Color wallColor = new Color((int) (255 / colorOff), (int) (255 / colorOff), (int) (255 / colorOff));
                 /* Create a new sprite for the line */
@@ -64,26 +64,16 @@ public class Renderer implements Drawable {
                 wallSprite.draw(target, states);
                 for (int i = 0; i < Map.getHitPositions().size(); i++) {
                     Vector3f data = Map.getHitPositions().get(i);
-                    if (cast.getSide() == 1 && Math.floor(cast.getExactHit().y) == Math.floor(data.y)) {
-                        float hitPosition = (cast.getExactHit().x - data.x) * 10;
-                        if (cast.getExactHit().x > data.x && hitPosition > 0 && hitPosition < 1) {
+                    int side = Map.getHitSides().get(i);
+                    float hitSide = cast.getSide() == 1 ? cast.getExactHit().x : cast.getExactHit().y;
+                    float dataSide = cast.getSide() == 1 ? data.x : data.y;
+                    float opHitSide = cast.getSide() == 0 ? cast.getExactHit().x : cast.getExactHit().y;
+                    float opDataSide = cast.getSide() == 0 ? data.x : data.y;
+                    if ((int)hitSide == (int)dataSide && side == cast.getSide()) {
+                        System.out.println(cast.getExactHit() + " " + data + " " + (opHitSide - opDataSide));
+                        float hitPosition = (hitSide - dataSide) * 10;
+                        if (hitSide > dataSide && hitPosition > 0 && hitPosition < 1) {
                             Texture hitTexture = Map.getHitTextures().get(i);
-                            System.out.println(hitPosition);
-                            Sprite hitSprite = new Sprite();
-                            hitSprite.setTexture(hitTexture);
-                            hitSprite.setTextureRect(
-                                    new IntRect((int) (hitPosition * (float) hitTexture.getSize().x), 0, 1, 4)
-                            );
-                            hitSprite.setScale(new Vector2f(1, lineHeight / 10 / (float) hitTexture.getSize().y));
-                            hitSprite.setPosition(x, h / 2 + (int) (data.z * (h / 2)) - yaw);
-                            hitSprite.setPosition(x, wallTop + (int) ((data.z + 1)/2 * lineHeight));
-                            hitSprite.draw(target, states);
-                        }
-                    } else if (cast.getSide() == 0 && Math.floor(cast.getExactHit().x) == Math.floor(data.x)) {
-                        float hitPosition = (cast.getExactHit().y - data.y) * 10;
-                        if (cast.getExactHit().y > data.y && hitPosition > 0 && hitPosition < 1) {
-                            Texture hitTexture = Map.getHitTextures().get(i);
-                            System.out.println(hitPosition);
                             Sprite hitSprite = new Sprite();
                             hitSprite.setTexture(hitTexture);
                             hitSprite.setTextureRect(

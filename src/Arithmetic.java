@@ -17,4 +17,7 @@ public class Arithmetic {
             }
         }
     }
+    public static float lerp(float x1, float x2, float m) {
+        return  x1 + m * (x2 - x1);
+    }
 }

@@ -9,6 +9,7 @@ public class Map {
     private static int[][] currentMap;
     private static ArrayList<Vector3f> hitPositions;
     private static ArrayList<Texture> hitTextures;
+    private static ArrayList<Integer> hitSides;
     /* The current floor texture */
     private static Texture floorTexture;
     /* Load the grid map */
@@ -16,10 +17,12 @@ public class Map {
         currentMap = m;
         hitPositions = new ArrayList<Vector3f>();
         hitTextures = new ArrayList<Texture>();
+        hitSides = new ArrayList<Integer>();
     }
-    public static void addHitPosition(Vector3f data, Texture t) {
+    public static void addHitPosition(Vector3f data, Texture t, int side) {
         hitPositions.add(data);
         hitTextures.add(t);
+        hitSides.add(side);
     }
     public static ArrayList<Vector3f> getHitPositions() {
         return hitPositions;
@@ -27,6 +30,7 @@ public class Map {
     public static ArrayList<Texture> getHitTextures() {
         return hitTextures;
     }
+    public static ArrayList<Integer> getHitSides() { return hitSides; }
     /* Get the grid map */
     public static int[][] getCurrentMap() {
         return currentMap;

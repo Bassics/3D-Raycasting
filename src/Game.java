@@ -23,6 +23,7 @@ public class Game {
     private Player player;
     /* Instantiate the Renderer */
     private Renderer renderer;
+    private FPSCounter fpsCounter;
     /* These two are currently used for testing */
     private final float playerSpeed = 0.05f;
     private final float cameraSpeed = 0.02f;
@@ -93,6 +94,7 @@ public class Game {
         WeaponHandler.createWeapon("m1911", player);
         /* Instantiate the renderer */
         renderer = new Renderer(window, player);
+        fpsCounter = new FPSCounter();
         /* Set the last mouse position to the current mouse position */
         lastMousePosition = Mouse.getPosition();
     }
@@ -181,6 +183,8 @@ public class Game {
 
         window.draw(renderer);
 
+        window.draw(fpsCounter);
+
         window.display();
     }
 
@@ -208,6 +212,7 @@ public class Game {
 
             if (frameTime >= 1f) {
                 System.out.println("FPS: " + (int)(framesDrawn/frameTime));
+                fpsCounter.updateFPS((int)(framesDrawn/frameTime));
                 framesDrawn = 0;
                 frameTime = 0f;
             }

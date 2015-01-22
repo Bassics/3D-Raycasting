@@ -46,16 +46,27 @@ public class Weapon implements Drawable {
     public void animateShooting() {
         renderQueue = new ArrayList<Texture>(fireTextures);
         int w = WeaponHandler.getWindowDimensions().x;
-        float camDirection = 2f * (w/2) / w - 1;
+        float camDirection = 2f * (w/2f) / w - 1;
         Vector2f rayDirection = new Vector2f(
                 player.getDirection().x + player.getPlane().x * camDirection,
                 player.getDirection().y + player.getPlane().y * camDirection
         );
         Ray cast = new Ray(player.getPosition(), rayDirection);
         boolean hitObject = cast.calculateRay();
+        int h = WeaponHandler.getWindowDimensions().y;
+        int lineHeight = Math.abs((int)(h/cast.getLength()));
+        int yaw = (int) (player.getYaw() * (h / 2));
+        int wallTop = -lineHeight / 2 + h / 2 - yaw;
+        int wallBottom = lineHeight / 2 + h / 2 - yaw;
         if (hitObject) {
-            Vector3f hitPosition = new Vector3f(cast.getExactHit().x, cast.getExactHit().y, player.getYaw());
-            Map.addHitPosition(hitPosition, TextureHandler.getHitTextures()[1+(int)(Math.random()*4)], cast.getSide());
+            if (h/2 > wallTop && h/2 < wallBottom - lineHeight / 10) {
+                Vector3f hitPosition = new Vector3f(
+                        cast.getExactHit().x,
+                        cast.getExactHit().y,
+                        (h / 2 - wallTop) / (float) lineHeight
+                );
+                Map.addHitPosition(hitPosition, TextureHandler.getHitTextures()[1 + (int) (Math.random() * 4)], cast.getSide());
+            }
         }
     }
     public void draw(RenderTarget target, RenderStates states) {
@@ -63,7 +74,6 @@ public class Weapon implements Drawable {
         Color weaponColor = new Color(o,o,o);
         if (renderQueue.size() > 0) {
             weaponSprite.setTexture(renderQueue.get(0));
-            //renderQueue.remove(0);
         } else {
             weaponSprite.setTexture(baseTexture);
         }
@@ -74,7 +84,6 @@ public class Weapon implements Drawable {
         );
         weaponSprite.setColor(weaponColor);
         float sizeRatio = windowDim.y/(float)spriteSize.y*2f;
-        System.out.println(sizeRatio);
         weaponSprite.setScale(new Vector2f(sizeRatio, sizeRatio));
         weaponSprite.setPosition(
                 xOffset + windowDim.x/2 - (sizeRatio * spriteSize.x)/3,

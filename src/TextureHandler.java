@@ -7,31 +7,28 @@ public class TextureHandler {
     private static Texture[] hitTextures = new Texture[5];
     public static void loadTextures() {
         for (int i = 1; i <= NUM_TEXTURES; i++) {
-            Texture texture1 = new Texture();
-            Texture texture2 = new Texture();
+            wallTextures[i] = new Texture[]{new Texture(), new Texture()};
             System.out.println("wolfenstein" + i + "_" + 1 + ".png");
             try {
-                texture1.loadFromStream(
+                wallTextures[i][0].loadFromStream(
                         TextureHandler.class.getClassLoader().getResourceAsStream("tex/wolfenstein" + i + "_" + 1 + ".png")
                 );
-                texture2.loadFromStream(
+                wallTextures[i][1].loadFromStream(
                         TextureHandler.class.getClassLoader().getResourceAsStream("tex/wolfenstein" + i + "_" + 2 + ".png")
                 );
             } catch(IOException ex) {
                 ex.printStackTrace();
             }
-            wallTextures[i] = new Texture[]{texture1, texture2};
         }
         for (int i = 1; i <= 4; i++) {
-            Texture texture = new Texture();
+            hitTextures[i] = new Texture();
             try {
-                texture.loadFromStream(
+                hitTextures[i].loadFromStream(
                         TextureHandler.class.getClassLoader().getResourceAsStream("tex/hit"+i+".png")
                 );
             } catch(IOException ex) {
                 ex.printStackTrace();
             }
-            hitTextures[i] = texture;
         }
     }
     public static Texture[][] getWallTextures() {

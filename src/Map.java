@@ -24,6 +24,15 @@ public class Map {
         hitTextures.add(t);
         hitSides.add(side);
     }
+    public static Vector3f getHitPosition(int i) {
+        return hitPositions.get(i);
+    }
+    public static Texture getHitTexture(int i) {
+        return hitTextures.get(i);
+    }
+    public static int getHitSide(int i) {
+        return hitSides.get(i);
+    }
     public static ArrayList<Vector3f> getHitPositions() {
         return hitPositions;
     }

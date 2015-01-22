@@ -51,7 +51,7 @@ public class Renderer implements Drawable {
                 /* The current ambient color of the line */
                 Color wallColor = new Color((int) (255 / colorOff), (int) (255 / colorOff), (int) (255 / colorOff));
                 /* Create a new sprite for the line */
-                Sprite wallSprite = SpriteHandler.getSprite(x);
+                Sprite wallSprite = SpriteHandler.getWallSprite(x);
                 /* Set the texture */
                 wallSprite.setTexture(wallTexture);
                 /* Correct the scaling of the sprite and texture */
@@ -63,25 +63,20 @@ public class Renderer implements Drawable {
                 wallSprite.setColor(wallColor);
                 wallSprite.draw(target, states);
                 for (int i = 0; i < Map.getHitPositions().size(); i++) {
-                    Vector3f data = Map.getHitPositions().get(i);
-                    int side = Map.getHitSides().get(i);
+                    Vector3f hitPosition = Map.getHitPosition(i);
                     float hitSide = cast.getSide() == 1 ? cast.getExactHit().x : cast.getExactHit().y;
-                    float dataSide = cast.getSide() == 1 ? data.x : data.y;
-                    float opHitSide = cast.getSide() == 0 ? cast.getExactHit().x : cast.getExactHit().y;
-                    float opDataSide = cast.getSide() == 0 ? data.x : data.y;
-                    if ((int)hitSide == (int)dataSide && side == cast.getSide()) {
-                        System.out.println(cast.getExactHit() + " " + data + " " + (opHitSide - opDataSide));
-                        float hitPosition = (hitSide - dataSide) * 10;
-                        if (hitSide > dataSide && hitPosition > 0 && hitPosition < 1) {
-                            Texture hitTexture = Map.getHitTextures().get(i);
-                            Sprite hitSprite = new Sprite();
+                    float dataSide = cast.getSide() == 1 ? hitPosition.x : hitPosition.y;
+                    if ((int)hitSide == (int)dataSide && Map.getHitSide(i) == cast.getSide()) {
+                        float hitOffset = (hitSide - dataSide) * 10;
+                        if (hitSide > dataSide && hitOffset > 0 && hitOffset < 1) {
+                            Texture hitTexture = Map.getHitTexture(i);
+                            Sprite hitSprite = SpriteHandler.getBulletSprite(x);
                             hitSprite.setTexture(hitTexture);
                             hitSprite.setTextureRect(
-                                    new IntRect((int) (hitPosition * (float) hitTexture.getSize().x), 0, 1, 4)
+                                    new IntRect((int) (hitOffset * (float) hitTexture.getSize().x), 0, 1, 4)
                             );
                             hitSprite.setScale(new Vector2f(1, lineHeight / 10 / (float) hitTexture.getSize().y));
-                            hitSprite.setPosition(x, h / 2 + (int) (data.z * (h / 2)) - yaw);
-                            hitSprite.setPosition(x, wallTop + (int) ((data.z + 1)/2 * lineHeight));
+                            hitSprite.setPosition(x, wallTop + (int) ((hitPosition.z) * lineHeight));
                             hitSprite.draw(target, states);
                         }
                     }

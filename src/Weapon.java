@@ -1,3 +1,5 @@
+import org.jsfml.audio.Sound;
+import org.jsfml.audio.SoundBuffer;
 import org.jsfml.graphics.*;
 import org.jsfml.system.Vector2f;
 import org.jsfml.system.Vector2i;
@@ -16,6 +18,9 @@ public class Weapon implements Drawable {
     ArrayList<Texture> fireTextures = new ArrayList<Texture>();
     private int xOffset = 0;
     private int yOffset = 0;
+    private SoundBuffer soundBuffer = new SoundBuffer();
+    private Sound sound = new Sound();
+    
     public Weapon(String name, Player p) {
         weaponName = name;
         player = p;
@@ -27,6 +32,11 @@ public class Weapon implements Drawable {
             baseTexture.loadFromStream(
                     getClass().getClassLoader().getResourceAsStream("wep/" + weaponName + "_base.png")
             );
+        } catch(IOException ex) {
+            ex.printStackTrace();
+        }
+        try{
+            soundBuffer.loadFromStream(getClass().getClassLoader().getResourceAsStream("salmon.wav"));
         } catch(IOException ex) {
             ex.printStackTrace();
         }
@@ -42,8 +52,10 @@ public class Weapon implements Drawable {
             }
             fireTextures.add(currentTexture);
         }
+        sound.setBuffer(soundBuffer);
     }
     public void animateShooting() {
+        sound.play();
         renderQueue = new ArrayList<Texture>(fireTextures);
         int w = WeaponHandler.getWindowDimensions().x;
         float camDirection = 2f * (w/2f) / w - 1;

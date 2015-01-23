@@ -15,12 +15,12 @@ public class FPSCounter implements Drawable {
         catch(IOException e) {
             e.printStackTrace();
         }
-        text = new Text("fps: " + FPS, font, 24);
+        text = new Text(FPS+"", font, 24);
         text.setColor(Color.YELLOW);
     }
     public void updateFPS(int x) {
         FPS = x;
-        text.setString("fps: " + FPS);
+        text.setString(FPS+"");
     }
     public void draw(RenderTarget target, RenderStates states) {
         text.draw(target, states);

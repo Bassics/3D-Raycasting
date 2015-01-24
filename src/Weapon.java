@@ -10,6 +10,7 @@ import java.io.InputStream;
 import java.util.ArrayList;
 
 public class Weapon implements Drawable {
+    private RenderWindow window;
     Player player;
     String weaponName;
     Sprite weaponSprite = new Sprite();
@@ -25,9 +26,10 @@ public class Weapon implements Drawable {
     private final int crosshairOffset = 20;
     private int currentOffset = 0;
 
-    public Weapon(String name, Player p) {
+    public Weapon(String name, Player p, RenderWindow w) {
         weaponName = name;
         player = p;
+        window = w;
         loadTextures();
     }
     public void loadTextures() {
@@ -70,7 +72,7 @@ public class Weapon implements Drawable {
     public void animateShooting() {
         sound.play();
         renderQueue = new ArrayList<Texture>(fireTextures);
-        int w = WeaponHandler.getWindowDimensions().x;
+        int w = window.getSize().x;
         float camDirection = 2f * (w/2f) / w - 1;
         Vector2f rayDirection = new Vector2f(
                 player.getDirection().x + player.getPlane().x * camDirection,
@@ -78,7 +80,7 @@ public class Weapon implements Drawable {
         );
         Ray cast = new Ray(player.getPosition(), rayDirection);
         boolean hitObject = cast.calculateRay();
-        int h = WeaponHandler.getWindowDimensions().y;
+        int h = window.getSize().y;
         int lineHeight = Math.abs((int)(h/cast.getLength()));
         int yaw = (int) (player.getYaw() * (h / 2));
         int wallTop = -lineHeight / 2 + h / 2 - yaw;
@@ -90,7 +92,7 @@ public class Weapon implements Drawable {
                         cast.getExactHit().y,
                         (h / 2 - wallTop) / (float) lineHeight
                 );
-                Map.addHitPosition(hitPosition, TextureHandler.getHitTextures()[1 + (int) (Math.random() * 4)], cast.getSide());
+                Map.addHitPosition(hitPosition, TextureHandler.getHitTextures()[1 + (int) (Math.random() * 4)], cast.getMapPos());
             }
         }
     }
@@ -103,16 +105,15 @@ public class Weapon implements Drawable {
             weaponSprite.setTexture(baseTexture);
         }
         Vector2i spriteSize = weaponSprite.getTexture().getSize();
-        Vector2i windowDim = WeaponHandler.getWindowDimensions();
         weaponSprite.setTextureRect(
                 new IntRect(0, 0, spriteSize.x, spriteSize.y)
         );
         weaponSprite.setColor(weaponColor);
-        float sizeRatio = windowDim.y/(float)spriteSize.y*2f;
+        float sizeRatio = window.getSize().y/(float)spriteSize.y;
         weaponSprite.setScale(new Vector2f(sizeRatio, sizeRatio));
         weaponSprite.setPosition(
-                xOffset + windowDim.x/2 - (sizeRatio * spriteSize.x)/3,
-                yOffset + windowDim.y/2 - (sizeRatio * spriteSize.y)/4
+                xOffset + window.getSize().x/2 - (sizeRatio * spriteSize.x)/1.25f,
+                yOffset + window.getSize().y/2 - (sizeRatio * spriteSize.y)/4
         );
         weaponSprite.draw(target, states);
         for (int i = 0; i < crossHairs.length; i++) {
@@ -124,9 +125,9 @@ public class Weapon implements Drawable {
             renderQueue.remove(0);
         }
         float dir = Math.abs(player.getForwardDir()) == 1 || Math.abs(player.getSidewaysDir()) == 1 ? 1f : 0f;
-        currentOffset = (int)Arithmetic.lerp(currentOffset, dir * crosshairOffset, 0.5f);
-        int h = WeaponHandler.getWindowDimensions().y;
-        int w = WeaponHandler.getWindowDimensions().x;
+        currentOffset = (int)Arithmetic.lerp(currentOffset, dir * crosshairOffset, 0.25f);
+        int h = window.getSize().y;
+        int w = window.getSize().x;
         crossHairs[0].setPosition(w/2 - crossHairs[0].getSize().x/2, h/2 - crossHairs[0].getSize().y*1.5f - currentOffset);
         crossHairs[1].setPosition(w/2 - crossHairs[1].getSize().x/2, h/2 + crossHairs[1].getSize().y*.5f + currentOffset);
         crossHairs[2].setPosition(w/2 - crossHairs[2].getSize().x*1.5f - currentOffset, h/2 - crossHairs[2].getSize().y/2);

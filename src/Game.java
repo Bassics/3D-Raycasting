@@ -96,8 +96,7 @@ public class Game {
         TextureHandler.loadTextures();
         SpriteHandler.loadSprites(window.getSize().x);
         Map.setFloorTexture(TextureHandler.getWallTextures()[1][1]);
-        WeaponHandler.setWindowDimensions(windowDimensions);
-        WeaponHandler.createWeapon("m1911", player);
+        WeaponHandler.createWeapon("m1911", player, window);
         /* Instantiate the renderer */
         renderer = new Renderer(window, player);
         fpsCounter = new FPSCounter();
@@ -200,21 +199,12 @@ public class Game {
         Clock updateClock = new Clock();
         float lagTime = 0f;
         float frameTime = 0f;
-        float secretCount = 0f;
         int framesDrawn = 0;
-        Sound sound = new Sound();
-        SoundBuffer soundBuffer = new SoundBuffer();
-        try {
-            soundBuffer.loadFromStream(getClass().getClassLoader().getResourceAsStream("gunshot.wav"));
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        sound.setBuffer(soundBuffer);
+
         while (window.isOpen()) {
             float elapsedTime = updateClock.restart().asSeconds();
             lagTime += elapsedTime;
             frameTime += elapsedTime;
-            secretCount += elapsedTime;
 
             doInput();
 
@@ -231,11 +221,6 @@ public class Game {
                 fpsCounter.updateFPS((int)(framesDrawn/frameTime));
                 framesDrawn = 0;
                 frameTime = 0f;
-            }
-            if(secretCount >= 20f && sound.getStatus() != SoundSource.Status.PLAYING) {
-                System.out.println("go");
-                sound.play();
-                secretCount = 0;
             }
         }
     }

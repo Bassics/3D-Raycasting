@@ -3,6 +3,7 @@ import org.jsfml.system.Vector2f;
 import org.jsfml.system.Vector2i;
 import org.jsfml.system.Vector3f;
 
+import java.lang.reflect.Array;
 import java.util.Arrays;
 
 public class Renderer implements Drawable {
@@ -63,12 +64,12 @@ public class Renderer implements Drawable {
                 wallSprite.setColor(wallColor);
                 wallSprite.draw(target, states);
                 for (int i = 0; i < Map.getHitPositions().size(); i++) {
-                    Vector3f hitPosition = Map.getHitPosition(i);
-                    float hitSide = cast.getSide() == 1 ? cast.getExactHit().x : cast.getExactHit().y;
-                    float dataSide = cast.getSide() == 1 ? hitPosition.x : hitPosition.y;
-                    if ((int)hitSide == (int)dataSide && Map.getHitSide(i) == cast.getSide()) {
-                        float hitOffset = (hitSide - dataSide) * 10;
-                        if (hitSide > dataSide && hitOffset > 0 && hitOffset < 1) {
+                    if (Arrays.equals(Map.getHitMap(i), cast.getMapPos())) {
+                        Vector3f hitPosition = Map.getHitPosition(i);
+                        float hitSide = cast.getSide() == 1 ? cast.getExactHit().x : cast.getExactHit().y;
+                        float dataSide = cast.getSide() == 1 ? hitPosition.x : hitPosition.y;
+                        float hitOffset = (hitSide - dataSide) * 10 + 0.5f;
+                        if (hitSide > dataSide - 1/20f && hitOffset > 0 && hitOffset < 1) {
                             Texture hitTexture = Map.getHitTexture(i);
                             Sprite hitSprite = SpriteHandler.getBulletSprite(x);
                             hitSprite.setTexture(hitTexture);
@@ -76,7 +77,7 @@ public class Renderer implements Drawable {
                                     new IntRect((int) (hitOffset * (float) hitTexture.getSize().x), 0, 1, 4)
                             );
                             hitSprite.setScale(new Vector2f(1, lineHeight / 10 / (float) hitTexture.getSize().y));
-                            hitSprite.setPosition(x, wallTop + (int) ((hitPosition.z) * lineHeight));
+                            hitSprite.setPosition(x, wallTop + (int) ((hitPosition.z - 1/20f) * lineHeight));
                             hitSprite.draw(target, states);
                         }
                     }

@@ -90,6 +90,10 @@ public class Player {
         this.forwardDir = forwardDir;
     }
 
+    public float getSidewaysDir() { return this.sidewaysDir; }
+
+    public float getForwardDir() { return this.forwardDir; }
+
     public void update() {
         moveForward(forwardDir);
         moveSideways(sidewaysDir);

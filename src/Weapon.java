@@ -14,13 +14,17 @@ public class Weapon implements Drawable {
     String weaponName;
     Sprite weaponSprite = new Sprite();
     Texture baseTexture = new Texture();
+    RectangleShape[] crossHairs;
     ArrayList<Texture> renderQueue = new ArrayList<Texture>();
     ArrayList<Texture> fireTextures = new ArrayList<Texture>();
     private int xOffset = 0;
     private int yOffset = 0;
     private SoundBuffer soundBuffer = new SoundBuffer();
     private Sound sound = new Sound();
-    
+
+    private final int crosshairOffset = 20;
+    private int currentOffset = 0;
+
     public Weapon(String name, Player p) {
         weaponName = name;
         player = p;
@@ -52,7 +56,16 @@ public class Weapon implements Drawable {
             }
             fireTextures.add(currentTexture);
         }
+
         sound.setBuffer(soundBuffer);
+
+        crossHairs = new RectangleShape[]{
+                new RectangleShape(new Vector2f(2, 10)),
+                new RectangleShape(new Vector2f(2, 10)),
+                new RectangleShape(new Vector2f(10, 2)),
+                new RectangleShape(new Vector2f(10, 2))
+        };
+
     }
     public void animateShooting() {
         sound.play();
@@ -102,11 +115,22 @@ public class Weapon implements Drawable {
                 yOffset + windowDim.y/2 - (sizeRatio * spriteSize.y)/4
         );
         weaponSprite.draw(target, states);
+        for (int i = 0; i < crossHairs.length; i++) {
+            crossHairs[i].draw(target, states);
+        }
     }
     public void update() {
         if (renderQueue.size() > 0) {
             renderQueue.remove(0);
         }
+        float dir = Math.abs(player.getForwardDir()) == 1 || Math.abs(player.getSidewaysDir()) == 1 ? 1f : 0f;
+        currentOffset = (int)Arithmetic.lerp(currentOffset, dir * crosshairOffset, 0.5f);
+        int h = WeaponHandler.getWindowDimensions().y;
+        int w = WeaponHandler.getWindowDimensions().x;
+        crossHairs[0].setPosition(w/2 - crossHairs[0].getSize().x/2, h/2 - crossHairs[0].getSize().y*1.5f - currentOffset);
+        crossHairs[1].setPosition(w/2 - crossHairs[1].getSize().x/2, h/2 + crossHairs[1].getSize().y*.5f + currentOffset);
+        crossHairs[2].setPosition(w/2 - crossHairs[2].getSize().x*1.5f - currentOffset, h/2 - crossHairs[2].getSize().y/2);
+        crossHairs[3].setPosition(w/2 + crossHairs[3].getSize().x*.5f + currentOffset, h/2 - crossHairs[3].getSize().y/2);
     }
 
     public void setPitchOffset(int x) {

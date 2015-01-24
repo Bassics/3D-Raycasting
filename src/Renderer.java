@@ -47,7 +47,7 @@ public class Renderer implements Drawable {
                 /* Where the line ends on the screen */
                 int wallBottom = lineHeight / 2 + h / 2 - yaw;
                 /* The offset of color depending on how far the player is */
-                float colorOff = (float) Math.pow(cast.getLength()/1.5, 0.5);
+                float colorOff = (float) Math.pow(cast.getLength()/3, 0.5);
                 /* The current ambient color of the line */
                 Color wallColor = new Color((int) (255 / colorOff), (int) (255 / colorOff), (int) (255 / colorOff));
                 /* Create a new sprite for the line */

@@ -171,8 +171,10 @@ public class Game {
             /* Rotate the camera by the buffered mouse movement */
             player.rotateCamera((float) mouseMovement.x / 10);
             player.tiltCamera((float) -mouseMovement.y / 10);
-            WeaponHandler.getCurrentWeapon().setPitchOffset((int)(mouseMovement.x/5));
-            WeaponHandler.getCurrentWeapon().setYawOffset((int)(mouseMovement.y/5));
+            WeaponHandler.getCurrentWeapon().setPitchOffset(
+                    (int)(mouseMovement.x/(window.getSize().x/1000f)) + (int)(player.getSidewaysDir() * (window.getSize().x/50f))
+            );
+            WeaponHandler.getCurrentWeapon().setYawOffset((int)(mouseMovement.y/(window.getSize().y/1000f)));
             /* Set the current mouse position to the center so the mouse doesn't go off the edge */
             Mouse.setPosition(lastMousePosition);
         }

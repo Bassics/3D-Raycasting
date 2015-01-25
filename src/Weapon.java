@@ -135,10 +135,10 @@ public class Weapon implements Drawable {
     }
 
     public void setPitchOffset(int x) {
-        this.xOffset = (int)(Arithmetic.lerp(xOffset, x, 0.5f));
+        this.xOffset = (int)(Arithmetic.lerp(xOffset, x, 0.25f));
     }
 
     public void setYawOffset(int y) {
-        this.yOffset = (int)(Arithmetic.lerp(yOffset, y, 0.5f));
+        this.yOffset = (int)(Arithmetic.lerp(yOffset, y, 0.25f));
     }
 }

@@ -1,6 +1,7 @@
 import org.jsfml.audio.Sound;
 import org.jsfml.audio.SoundBuffer;
 import org.jsfml.graphics.*;
+import org.jsfml.system.Clock;
 import org.jsfml.system.Vector2f;
 import org.jsfml.system.Vector2i;
 import org.jsfml.system.Vector3f;
@@ -17,8 +18,11 @@ public class Weapon implements Drawable {
     ArrayList<Texture> fireTextures = new ArrayList<Texture>();
     private int xOffset = 0;
     private int yOffset = 0;
+    private float targetRotation = 0;
+    private float currentRotation = 0;
     private SoundBuffer soundBuffer = new SoundBuffer();
     private Sound sound = new Sound();
+    private int numUpdates = 0;
 
     private final int crosshairOffset = 20;
     private int currentOffset = 0;
@@ -87,6 +91,7 @@ public class Weapon implements Drawable {
         weaponSprite.setColor(weaponColor);
         float sizeRatio = window.getSize().y/(float)spriteSize.y;
         weaponSprite.setScale(new Vector2f(sizeRatio, sizeRatio));
+        weaponSprite.setRotation(currentRotation);
         weaponSprite.setPosition(
                 xOffset + window.getSize().x/2 - (sizeRatio * spriteSize.x)/1.25f,
                 yOffset + window.getSize().y/2 - (sizeRatio * spriteSize.y)/4
@@ -97,6 +102,10 @@ public class Weapon implements Drawable {
         }
     }
     public void update() {
+        numUpdates++;
+        targetRotation = (numUpdates/60%2)*0.5f;
+        System.out.println(targetRotation);
+        currentRotation = Arithmetic.lerp(currentRotation, targetRotation, 0.25f);
         if (renderQueue.size() > 0) {
             renderQueue.remove(0);
         }

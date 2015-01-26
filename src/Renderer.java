@@ -1,5 +1,6 @@
 import org.jsfml.graphics.*;
 import org.jsfml.system.Vector2f;
+import org.jsfml.system.Vector2i;
 import org.jsfml.system.Vector3f;
 import java.util.Arrays;
 
@@ -18,6 +19,7 @@ public class Renderer implements Drawable {
         int h = window.getSize().y;
         /* This is the amount that the camera is tilted on the y-axis */
         int yaw = (int) (player.getYaw() * (h / 2));
+        int yCount = 0;
         /* Loop through every x pixel */
         for (int x = 0; x < w; x++) {
             /* The pixel in camera space */
@@ -105,13 +107,14 @@ public class Renderer implements Drawable {
                             (int)(floorDistance.x * floorTexture.getSize().x) % floorTexture.getSize().x,
                             (int)(floorDistance.y * floorTexture.getSize().y) % floorTexture.getSize().y
                     );
-                    Sprite floorSprite = new Sprite();
+                    Sprite floorSprite = SpriteHandler.getFloorSprite(yCount);
                     floorSprite.setTexture(floorTexture);
                     floorSprite.setTextureRect(new IntRect(floorTexPos.x, floorTexPos.y, 1, 1));
                     floorSprite.setScale(new Vector2f(1, 1));
                     floorSprite.setPosition(x, y);
                     floorSprite.setColor(wallColor);
                     floorSprite.draw(target, states);
+                    yCount++;
                 }*/
             }
         }

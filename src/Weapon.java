@@ -62,7 +62,7 @@ public class Weapon implements Drawable {
         int wallTop = -lineHeight / 2 + h / 2 - yaw;
         int wallBottom = lineHeight / 2 + h / 2 - yaw;
         if (hitObject) {
-            if (h/2 > wallTop && h/2 < wallBottom - lineHeight / 10) {
+            if (h/2 > wallTop && h/2 < wallBottom) {
                 Vector3f hitPosition = new Vector3f(
                         cast.getExactHit().x,
                         cast.getExactHit().y,

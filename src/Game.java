@@ -94,7 +94,7 @@ public class Game {
         player.setRotSpeed(cameraSpeed);
         /* Load all of the needed textures */
         TextureHandler.loadTextures();
-        SpriteHandler.loadSprites(window.getSize().x);
+        SpriteHandler.loadSprites(window.getSize().x, window.getSize().y);
         Map.setFloorTexture(TextureHandler.getWallTextures()[1][1]);
         WeaponHandler.createWeapon("m1911", player, window);
         /* Instantiate the renderer */
@@ -105,6 +105,7 @@ public class Game {
     }
 
     public void doInput() {
+        Weapon currentWeapon = WeaponHandler.getCurrentWeapon();
         for (Event event : window.pollEvents()) {
             switch (event.type) {
                 case CLOSED:
@@ -119,7 +120,7 @@ public class Game {
                 case MOUSE_BUTTON_PRESSED:
                     switch (event.asMouseButtonEvent().button) {
                         case LEFT:
-                            WeaponHandler.getCurrentWeapon().doShooting();
+                            currentWeapon.doShooting();
                             break;
                     }
                     break;
@@ -165,10 +166,10 @@ public class Game {
             /* Rotate the camera by the buffered mouse movement */
             player.rotateCamera((float) mouseMovement.x / 10);
             player.tiltCamera((float) -mouseMovement.y / 10);
-            WeaponHandler.getCurrentWeapon().setPitchOffset(
+            currentWeapon.setPitchOffset(
                     (int)(mouseMovement.x/(window.getSize().x/1000f)) + (int)(player.getSidewaysDir() * (window.getSize().x/50f))
             );
-            WeaponHandler.getCurrentWeapon().setYawOffset((int)(mouseMovement.y/(window.getSize().y/1000f)));
+            currentWeapon.setYawOffset((int)(mouseMovement.y/(window.getSize().y/1000f)));
             /* Set the current mouse position to the center so the mouse doesn't go off the edge */
             Mouse.setPosition(lastMousePosition);
         }

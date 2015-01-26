@@ -82,17 +82,17 @@ public class Player {
         return yaw;
     }
 
-    public void setSidewaysDir(float sidewaysDir) {
-        this.sidewaysDir = sidewaysDir;
+    public void setSidewaysDir(float dir) {
+        sidewaysDir = dir;
     }
 
-    public void setForwardDir(float forwardDir) {
-        this.forwardDir = forwardDir;
+    public void setForwardDir(float dir) {
+        forwardDir = dir;
     }
 
-    public float getSidewaysDir() { return this.sidewaysDir; }
+    public float getSidewaysDir() { return sidewaysDir; }
 
-    public float getForwardDir() { return this.forwardDir; }
+    public float getForwardDir() { return forwardDir; }
 
     public void update() {
         moveForward(forwardDir);

@@ -1,9 +1,6 @@
 import org.jsfml.graphics.*;
 import org.jsfml.system.Vector2f;
-import org.jsfml.system.Vector2i;
 import org.jsfml.system.Vector3f;
-
-import java.lang.reflect.Array;
 import java.util.Arrays;
 
 public class Renderer implements Drawable {

@@ -26,7 +26,7 @@ public class Ray {
     }
 
     public Vector2f getPosition() {
-        return position;
+        return this.position;
     }
 
     public Vector2f getDirection() {

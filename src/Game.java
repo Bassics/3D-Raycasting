@@ -119,7 +119,7 @@ public class Game {
                 case MOUSE_BUTTON_PRESSED:
                     switch (event.asMouseButtonEvent().button) {
                         case LEFT:
-                            WeaponHandler.getCurrentWeapon().animateShooting();
+                            WeaponHandler.getCurrentWeapon().doShooting();
                             break;
                     }
                     break;
@@ -146,26 +146,20 @@ public class Game {
         }
         if (windowFocus) {
             /* Move the player in the desired direction */
-            if (Keyboard.isKeyPressed(Key.W)) {
+            if (Keyboard.isKeyPressed(Key.W))
                 player.setForwardDir(1);
-            } else if (Keyboard.isKeyPressed(Key.S)) {
+            else if (Keyboard.isKeyPressed(Key.S))
                 player.setForwardDir(-1);
-            } else {
+            else
                 player.setForwardDir(0);
-            }
-            if (Keyboard.isKeyPressed(Key.A)) {
+            if (Keyboard.isKeyPressed(Key.A))
                 player.setSidewaysDir(1);
-            } else if (Keyboard.isKeyPressed(Key.D)) {
+            else if (Keyboard.isKeyPressed(Key.D))
                 player.setSidewaysDir(-1);
-            } else {
+            else
                 player.setSidewaysDir(0);
-            }
-        }
-        if (windowFocus) {
-            /* Get the current mouse position */
-            Vector2i currentMousePosition = Mouse.getPosition();
             /* Get the difference between the last and the current mouse position */
-            Vector2i mouseMovement = Vector2i.sub(lastMousePosition, currentMousePosition);
+            Vector2i mouseMovement = Vector2i.sub(lastMousePosition, Mouse.getPosition());
             /* Set the last mouse position to the center (explanation below) */
             lastMousePosition = new Vector2i(windowDimensions.x / 2, windowDimensions.y / 2);
             /* Rotate the camera by the buffered mouse movement */
@@ -219,7 +213,6 @@ public class Game {
             framesDrawn++;
 
             if (frameTime >= 1f) {
-                System.out.println("FPS: " + (int)(framesDrawn/frameTime));
                 fpsCounter.updateFPS((int)(framesDrawn/frameTime));
                 framesDrawn = 0;
                 frameTime = 0f;

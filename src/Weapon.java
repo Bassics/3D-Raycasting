@@ -4,9 +4,6 @@ import org.jsfml.graphics.*;
 import org.jsfml.system.Vector2f;
 import org.jsfml.system.Vector2i;
 import org.jsfml.system.Vector3f;
-
-import java.io.IOException;
-import java.io.InputStream;
 import java.util.ArrayList;
 
 public class Weapon implements Drawable {
@@ -33,43 +30,22 @@ public class Weapon implements Drawable {
         loadTextures();
     }
     public void loadTextures() {
-        //baseTexture.setSmooth(true);
-        try {
-            baseTexture.loadFromStream(
-                    getClass().getClassLoader().getResourceAsStream("wep/" + weaponName + "_base.png")
-            );
-        } catch(IOException ex) {
-            ex.printStackTrace();
-        }
-        try{
-            soundBuffer.loadFromStream(getClass().getClassLoader().getResourceAsStream("salmon.wav"));
-        } catch(IOException ex) {
-            ex.printStackTrace();
-        }
+        TextureHandler.setTexture(baseTexture, "wep/" + weaponName + "_base.png");
+        SoundHandler.setSound(soundBuffer, "salmon.wav");
+        sound.setBuffer(soundBuffer);
         for (int i = 1; i < 15; i++) {
             Texture currentTexture = new Texture();
-            //currentTexture.setSmooth(true);
-            try {
-                currentTexture.loadFromStream(
-                        getClass().getClassLoader().getResourceAsStream("wep/" + weaponName + "_fire" + i + ".png")
-                );
-            } catch(IOException ex) {
-                ex.printStackTrace();
-            }
+            TextureHandler.setTexture(currentTexture, "wep/" + weaponName + "_fire" + i + ".png");
             fireTextures.add(currentTexture);
         }
-
-        sound.setBuffer(soundBuffer);
-
         crossHairs = new RectangleShape[]{
                 new RectangleShape(new Vector2f(2, 10)),
                 new RectangleShape(new Vector2f(2, 10)),
                 new RectangleShape(new Vector2f(10, 2)),
                 new RectangleShape(new Vector2f(10, 2))
         };
-
     }
-    public void animateShooting() {
+    public void doShooting() {
         sound.play();
         renderQueue = new ArrayList<Texture>(fireTextures);
         int w = window.getSize().x;

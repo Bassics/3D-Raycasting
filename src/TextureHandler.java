@@ -2,39 +2,29 @@ import org.jsfml.graphics.Texture;
 import java.io.IOException;
 
 public class TextureHandler {
-    private final static int NUM_TEXTURES = 58;
-    private static Texture[][] wallTextures = new Texture[NUM_TEXTURES + 1][2];
+    private static Texture[][] wallTextures = new Texture[59][2];
     private static Texture[] hitTextures = new Texture[5];
+    public static void setTexture(Texture t, String s) {
+        try {
+            t.loadFromStream(TextureHandler.class.getClassLoader().getResourceAsStream(s));
+        } catch(IOException ex) {
+            ex.printStackTrace();
+        }
+    }
     public static void loadTextures() {
-        for (int i = 1; i <= NUM_TEXTURES; i++) {
+        for (int i = 1; i <= 58; i++) {
             wallTextures[i] = new Texture[]{new Texture(), new Texture()};
-            System.out.println("wolfenstein" + i + "_" + 1 + ".png");
-            try {
-                wallTextures[i][0].loadFromStream(
-                        TextureHandler.class.getClassLoader().getResourceAsStream("tex/wolfenstein" + i + "_" + 1 + ".png")
-                );
-                wallTextures[i][1].loadFromStream(
-                        TextureHandler.class.getClassLoader().getResourceAsStream("tex/wolfenstein" + i + "_" + 2 + ".png")
-                );
-            } catch(IOException ex) {
-                ex.printStackTrace();
-            }
+            setTexture(wallTextures[i][0], "tex/wolfenstein" + i + "_" + 1 + ".png");
+            setTexture(wallTextures[i][1], "tex/wolfenstein" + i + "_" + 2 + ".png");
         }
         for (int i = 1; i <= 4; i++) {
             hitTextures[i] = new Texture();
-            try {
-                hitTextures[i].loadFromStream(
-                        TextureHandler.class.getClassLoader().getResourceAsStream("tex/hit"+i+".png")
-                );
-            } catch(IOException ex) {
-                ex.printStackTrace();
-            }
+            setTexture(hitTextures[i], "tex/hit" + i + ".png");
         }
     }
     public static Texture[][] getWallTextures() {
         return wallTextures;
     }
-
     public static Texture[] getHitTextures() {
         return hitTextures;
     }

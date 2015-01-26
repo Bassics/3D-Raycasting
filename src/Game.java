@@ -95,7 +95,7 @@ public class Game {
         /* Load all of the needed textures */
         TextureHandler.loadTextures();
         SpriteHandler.loadSprites(window.getSize().x, window.getSize().y);
-        Map.setFloorTexture(TextureHandler.getWallTextures()[1][1]);
+        Map.setFloorTexture(TextureHandler.getWallTextures()[43][1]);
         WeaponHandler.createWeapon("m1911", player, window);
         /* Instantiate the renderer */
         renderer = new Renderer(window, player);

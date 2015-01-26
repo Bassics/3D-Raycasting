@@ -7,14 +7,23 @@ import java.util.Arrays;
 public class Renderer implements Drawable {
     private RenderWindow window;
     private Player player;
+    private Image floorTextureImage;
+    private Image floorImage;
+    private Sprite floorSprite;
+    private Texture floorTexture;
 
     public Renderer(RenderWindow w, Player p) {
         window = w;
         player = p;
+        floorImage = new Image();
+        floorSprite = new Sprite();
+        floorTextureImage = Map.getFloorTexture().copyToImage();
+        floorTexture = new Texture();
     }
 
     public void draw(RenderTarget target, RenderStates states) {
         /* Get the width and height for later */
+        floorImage.create(window.getSize().x, window.getSize().y);
         int w = window.getSize().x;
         int h = window.getSize().y;
         /* This is the amount that the camera is tilted on the y-axis */
@@ -23,7 +32,7 @@ public class Renderer implements Drawable {
         /* Loop through every x pixel */
         for (int x = 0; x < w; x++) {
             /* The pixel in camera space */
-            float camDirection = 2f * x / w - 1;
+            float camDirection = (2f * x / w - 1) * w/h;
             /* The unit vector direction of the ray */
             Vector2f rayDirection = new Vector2f(
                     player.getDirection().x + player.getPlane().x * camDirection,
@@ -82,7 +91,7 @@ public class Renderer implements Drawable {
                     }
                 }
                 /* Get correct directions for floor rendering */
-                /*Vector2f floorPosition = new Vector2f(0, 0);
+                Vector2f floorPosition = new Vector2f(0, 0);
                 if (cast.getSide() == 0 && cast.getDirection().x > 0)
                     floorPosition =
                             new Vector2f(cast.getMapPos()[0], cast.getMapPos()[1] + cast.getHitPosition());
@@ -95,8 +104,7 @@ public class Renderer implements Drawable {
                 else
                     floorPosition =
                             new Vector2f(cast.getMapPos()[0] + cast.getHitPosition(), cast.getMapPos()[1] + 1);
-                Texture floorTexture = Map.getFloorTexture();
-                for (int y = wallBottom + 1; y < h; y++) {
+                for (int y = wallBottom + 1 + yaw; y < h + yaw; y++) {
                     float currentDist = h / (2f * y - h);
                     float weight = (currentDist - 0f) / (cast.getLength() - 0f);
                     Vector2f floorDistance = new Vector2f(
@@ -104,20 +112,21 @@ public class Renderer implements Drawable {
                             weight * floorPosition.y + (1 - weight) * player.getPosition().y
                     );
                     Vector2i floorTexPos = new Vector2i(
-                            (int)(floorDistance.x * floorTexture.getSize().x) % floorTexture.getSize().x,
-                            (int)(floorDistance.y * floorTexture.getSize().y) % floorTexture.getSize().y
+                            (int)(floorDistance.x * floorTextureImage.getSize().x) % floorTextureImage.getSize().x,
+                            (int)(floorDistance.y * floorTextureImage.getSize().y) % floorTextureImage.getSize().y
                     );
-                    Sprite floorSprite = SpriteHandler.getFloorSprite(yCount);
-                    floorSprite.setTexture(floorTexture);
-                    floorSprite.setTextureRect(new IntRect(floorTexPos.x, floorTexPos.y, 1, 1));
-                    floorSprite.setScale(new Vector2f(1, 1));
-                    floorSprite.setPosition(x, y);
-                    floorSprite.setColor(wallColor);
-                    floorSprite.draw(target, states);
-                    yCount++;
-                }*/
+                    floorImage.setPixel(x, y - yaw, floorTextureImage.getPixel(Math.abs(floorTexPos.x), Math.abs(floorTexPos.y)));
+                }
             }
         }
+        try {
+            floorTexture.loadFromImage(floorImage);
+        } catch (TextureCreationException e) {
+            e.printStackTrace();
+        }
+        floorSprite.setTexture(floorTexture);
+        floorSprite.setTextureRect(new IntRect(0, 0, w, h));
+        floorSprite.draw(target, states);
         WeaponHandler.getCurrentWeapon().draw(target, states);
     }
 }

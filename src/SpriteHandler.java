@@ -11,9 +11,6 @@ public class SpriteHandler {
         for (int i = 0; i < w; i++) {
             wallSprites.add(new Sprite());
             bulletSprites.add(new Sprite());
-            for (int y = h/2; y < h; y++) {
-                floorSprites.add(new Sprite());
-            }
         }
     }
     public static Sprite getWallSprite(int i) {

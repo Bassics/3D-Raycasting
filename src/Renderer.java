@@ -28,7 +28,6 @@ public class Renderer implements Drawable {
         int h = window.getSize().y;
         /* This is the amount that the camera is tilted on the y-axis */
         int yaw = (int) (player.getYaw() * (h / 2));
-        int yCount = 0;
         /* Loop through every x pixel */
         for (int x = 0; x < w; x++) {
             /* The pixel in camera space */
@@ -115,7 +114,7 @@ public class Renderer implements Drawable {
                             (int)(floorDistance.x * floorTextureImage.getSize().x) % floorTextureImage.getSize().x,
                             (int)(floorDistance.y * floorTextureImage.getSize().y) % floorTextureImage.getSize().y
                     );
-                    floorImage.setPixel(x, y - yaw, floorTextureImage.getPixel(Math.abs(floorTexPos.x), Math.abs(floorTexPos.y)));
+                    floorImage.setPixel(x, Math.max(0, y - yaw), floorTextureImage.getPixel(Math.abs(floorTexPos.x), Math.abs(floorTexPos.y)));
                 }
             }
         }

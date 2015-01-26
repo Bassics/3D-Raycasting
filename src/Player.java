@@ -53,7 +53,7 @@ public class Player {
     }
     public void tiltCamera(float dir) {
         /* Rotate the camera by the yaw */
-        if (Math.abs(yaw + (rotSpeed * dir)) < 1)
+        if (Math.abs(yaw + (rotSpeed * dir)) < 1.5)
             yaw += rotSpeed * dir;
     }
     public void setPosition(Vector2f p) {

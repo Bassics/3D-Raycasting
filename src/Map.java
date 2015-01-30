@@ -20,6 +20,11 @@ public class Map {
         hitMaps = new ArrayList<int[]>();
     }
     public static void addHitPosition(Vector3f data, Texture t, int[] pos) {
+        if (hitPositions.size() > 30) {
+            hitPositions.remove(0);
+            hitTextures.remove(0);
+            hitMaps.remove(0);
+        }
         hitPositions.add(data);
         hitTextures.add(t);
         hitMaps.add(pos);

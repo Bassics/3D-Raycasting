@@ -22,7 +22,6 @@ public class Weapon implements Drawable {
     private int yOffset = 0;
     private int bobXOffset = 0;
     private int bobYOffset = 0;
-    private float targetRotation = 0;
     private float currentRotation = 0;
     private SoundBuffer soundBuffer = new SoundBuffer();
     private Sound sound = new Sound();
@@ -88,6 +87,10 @@ public class Weapon implements Drawable {
         }
     }
 
+    public void resetNumUpdates() {
+        numUpdates = 0;
+    }
+
     public void draw(RenderTarget target, RenderStates states) {
         int o = Math.max((int) ((player.getDirection().x + 0.5) * 1000f), 100);
         Color weaponColor = new Color(o, o, o);
@@ -121,15 +124,14 @@ public class Weapon implements Drawable {
         numUpdates++;
         numUpdates = Math.max(0, numUpdates);
         if (player.getSidewaysDir() != 0 || player.getForwardDir() != 0) {
-            targetRotation = (numUpdates / 15 % 2) * 12;
+            currentRotation = Arithmetic.lerp(currentRotation, (numUpdates / 15 % 2) * 12, 0.05f);
             bobXOffset = (int)Arithmetic.lerp(bobXOffset, (numUpdates / 15 % 4) * 14, 0.05f);
             bobYOffset = (int)Arithmetic.lerp(bobYOffset, (numUpdates / 15 % 2) * 14, 0.05f);
         } else {
-            targetRotation = (numUpdates / 60 % 2);
+            currentRotation = Arithmetic.lerp(currentRotation, (numUpdates / 60 % 2), 0.05f);
             bobXOffset = (int)Arithmetic.lerp(bobXOffset, 0, 0.05f);
-            bobYOffset = (int)Arithmetic.lerp(bobXOffset, 0, 0.05f);
+            bobYOffset = (int)Arithmetic.lerp(bobYOffset, 0, 0.05f);
         }
-        currentRotation = Arithmetic.lerp(currentRotation, targetRotation, 0.05f);
         if (cameraQueue.size() > 0) {
             cameraQueue.remove(0);
         }

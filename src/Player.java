@@ -83,11 +83,17 @@ public class Player {
     }
 
     public void setSidewaysDir(float dir) {
-        sidewaysDir = dir;
+        if (sidewaysDir != dir) {
+            WeaponHandler.getCurrentWeapon().resetNumUpdates();
+            sidewaysDir = dir;
+        }
     }
 
     public void setForwardDir(float dir) {
-        forwardDir = dir;
+        if (forwardDir != dir) {
+            WeaponHandler.getCurrentWeapon().resetNumUpdates();
+            forwardDir = dir;
+        }
     }
 
     public float getSidewaysDir() { return sidewaysDir; }

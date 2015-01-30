@@ -23,9 +23,10 @@ public class Renderer implements Drawable {
 
     public void draw(RenderTarget target, RenderStates states) {
         /* Get the width and height for later */
-        floorImage.create(window.getSize().x, window.getSize().y);
         int w = window.getSize().x;
         int h = window.getSize().y;
+        floorImage.create(w, h);
+        int pixelCount = 0;
         /* This is the amount that the camera is tilted on the y-axis */
         int yaw = (int) (player.getYaw() * (h / 2));
         /* Loop through every x pixel */
@@ -57,7 +58,7 @@ public class Renderer implements Drawable {
                 /* The offset of color depending on how far the player is */
                 float colorOff = (float) Math.pow(cast.getLength()/3, 0.5);
                 /* The current ambient color of the line */
-                Color wallColor = new Color((int) (255 / colorOff), (int) (255 / colorOff), (int) (255 / colorOff));
+                //Color wallColor = new Color((int) (255 / colorOff), (int) (255 / colorOff), (int) (255 / colorOff));
                 /* Create a new sprite for the line */
                 Sprite wallSprite = SpriteHandler.getWallSprite(x);
                 /* Set the texture */
@@ -68,7 +69,7 @@ public class Renderer implements Drawable {
                 /* Position the line */
                 wallSprite.setPosition(x, wallTop);
                 /* Set the ambient color of the line */
-                wallSprite.setColor(wallColor);
+                //wallSprite.setColor(wallColor);
                 wallSprite.draw(target, states);
                 for (int i = 0; i < Map.getHitPositions().size(); i++) {
                     if (Arrays.equals(Map.getHitMap(i), cast.getMapPos())) {
@@ -105,7 +106,7 @@ public class Renderer implements Drawable {
                             new Vector2f(cast.getMapPos()[0] + cast.getHitPosition(), cast.getMapPos()[1] + 1);
                 for (int y = wallBottom + 1 + yaw; y < h + yaw; y++) {
                     float currentDist = h / (2f * y - h);
-                    float weight = (currentDist - 0f) / (cast.getLength() - 0f);
+                    float weight = currentDist/cast.getLength();
                     Vector2f floorDistance = new Vector2f(
                             weight * floorPosition.x + (1 - weight) * player.getPosition().x,
                             weight * floorPosition.y + (1 - weight) * player.getPosition().y
@@ -114,7 +115,8 @@ public class Renderer implements Drawable {
                             (int)(floorDistance.x * floorTextureImage.getSize().x) % floorTextureImage.getSize().x,
                             (int)(floorDistance.y * floorTextureImage.getSize().y) % floorTextureImage.getSize().y
                     );
-                    floorImage.setPixel(x, Math.max(0, y - yaw), floorTextureImage.getPixel(Math.abs(floorTexPos.x), Math.abs(floorTexPos.y)));
+                    floorImage.setPixel(x, Math.max(0, y - yaw), floorTextureImage.getPixel(floorTexPos.x, floorTexPos.y));
+                    pixelCount++;
                 }
             }
         }
@@ -124,7 +126,8 @@ public class Renderer implements Drawable {
             e.printStackTrace();
         }
         floorSprite.setTexture(floorTexture);
-        floorSprite.draw(target, states);
+        if (pixelCount > 0)
+            floorSprite.draw(target, states);
         WeaponHandler.getCurrentWeapon().draw(target, states);
     }
 }

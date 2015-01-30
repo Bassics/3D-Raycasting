@@ -44,7 +44,7 @@ public class Game {
 
     public void doInitialize() {
         /* Create the window */
-        window.create(new VideoMode(640, 480), windowTitle, WindowStyle.FULLSCREEN);
+        window.create(VideoMode.getDesktopMode(), windowTitle, WindowStyle.FULLSCREEN);
         /* We don't want an annoying mouse cursor now, do we? */
         window.setMouseCursorVisible(false);
         window.setVerticalSyncEnabled(true);

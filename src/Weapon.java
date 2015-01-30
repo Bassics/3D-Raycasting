@@ -16,6 +16,7 @@ public class Weapon implements Drawable {
     RectangleShape[] crossHairs;
     ArrayList<Texture> renderQueue = new ArrayList<Texture>();
     ArrayList<Texture> fireTextures = new ArrayList<Texture>();
+    ArrayList<Float> cameraQueue = new ArrayList<Float>();
     private RenderWindow window;
     private int xOffset = 0;
     private int yOffset = 0;
@@ -53,6 +54,13 @@ public class Weapon implements Drawable {
     }
 
     public void doShooting() {
+        cameraQueue = new ArrayList<Float>();
+        for (int i = 0; i < 5; i++) {
+            cameraQueue.add(-0.5f);
+        }
+        for (int i = 0; i < 5; i++) {
+            cameraQueue.add(0.5f);
+        }
         sound.play();
         renderQueue = new ArrayList<Texture>(fireTextures);
         int w = window.getSize().x;
@@ -88,6 +96,9 @@ public class Weapon implements Drawable {
         } else {
             weaponSprite.setTexture(baseTexture);
         }
+        if (cameraQueue.size() > 0) {
+            player.tiltCamera(cameraQueue.get(0));
+        }
         Vector2i spriteSize = weaponSprite.getTexture().getSize();
         weaponSprite.setTextureRect(
                 new IntRect(0, 0, spriteSize.x, spriteSize.y)
@@ -108,16 +119,20 @@ public class Weapon implements Drawable {
 
     public void update() {
         numUpdates++;
+        numUpdates = Math.max(0, numUpdates);
         if (player.getSidewaysDir() != 0 || player.getForwardDir() != 0) {
-            targetRotation = (numUpdates / 15 % 2) * 8;
-            bobXOffset = (int)Arithmetic.lerp(bobXOffset, (numUpdates / 15 % 4) * 10, 0.05f);
-            bobYOffset = (int)Arithmetic.lerp(bobYOffset, (numUpdates / 15 % 2) * 10, 0.05f);
+            targetRotation = (numUpdates / 15 % 2) * 12;
+            bobXOffset = (int)Arithmetic.lerp(bobXOffset, (numUpdates / 15 % 4) * 14, 0.05f);
+            bobYOffset = (int)Arithmetic.lerp(bobYOffset, (numUpdates / 15 % 2) * 14, 0.05f);
         } else {
             targetRotation = (numUpdates / 60 % 2);
             bobXOffset = (int)Arithmetic.lerp(bobXOffset, 0, 0.05f);
             bobYOffset = (int)Arithmetic.lerp(bobXOffset, 0, 0.05f);
         }
         currentRotation = Arithmetic.lerp(currentRotation, targetRotation, 0.05f);
+        if (cameraQueue.size() > 0) {
+            cameraQueue.remove(0);
+        }
         if (renderQueue.size() > 0) {
             renderQueue.remove(0);
         }

@@ -124,7 +124,6 @@ public class Renderer implements Drawable {
             e.printStackTrace();
         }
         floorSprite.setTexture(floorTexture);
-        floorSprite.setTextureRect(new IntRect(0, 0, w, h));
         floorSprite.draw(target, states);
         WeaponHandler.getCurrentWeapon().draw(target, states);
     }

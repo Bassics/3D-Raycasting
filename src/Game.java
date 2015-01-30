@@ -167,7 +167,7 @@ public class Game {
             player.rotateCamera((float) mouseMovement.x / 10);
             player.tiltCamera((float) -mouseMovement.y / 10);
             currentWeapon.setPitchOffset(
-                    (int)(mouseMovement.x/(window.getSize().x/1000f)) + (int)(player.getSidewaysDir() * (window.getSize().x/50f))
+                    (int)(mouseMovement.x/(window.getSize().x/1000f)) + (int)(player.getSidewaysDir() * (window.getSize().x/20f))
             );
             currentWeapon.setYawOffset((int)(mouseMovement.y/(window.getSize().y/1000f)));
             /* Set the current mouse position to the center so the mouse doesn't go off the edge */
